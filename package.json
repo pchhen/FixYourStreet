@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "grunt": "^0.4.5",
+    "grunt-apidoc": "^0.11.0",
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-stylus": "^1.0.0",
     "grunt-contrib-watch": "^0.6.1",
@@ -26,5 +27,14 @@
     "load-grunt-tasks": "^3.2.0",
     "request": "^2.60.0",
     "time-grunt": "^1.2.1"
+  },
+  "apidoc": {
+      "name": "FixYourStreet",
+      "version": "0.0.1",
+      "description": "apiDoc basic example",
+      "apidoc": {
+        "title": "Custom apiDoc browser title",
+        "url" : "https://api.github.com/v1"
+    }
   }
 }

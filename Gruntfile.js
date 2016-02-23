@@ -30,6 +30,17 @@ module.exports = function (grunt) {
         }
       }
     },
+    apidoc: {
+        myapp: {
+        src: "app/",
+        dest: "apidoc/",
+        options: {
+          debug: true,
+          includeFilters: [ ".*\\.js$" ],
+          excludeFilters: [ "node_modules/" ]
+        }
+      }
+    },
     watch: {
       options: {
         nospawn: true,
@@ -41,7 +52,7 @@ module.exports = function (grunt) {
           'app/**/*.js',
           'config/*.js'
         ],
-        tasks: ['jshint', 'develop', 'delayed-livereload']
+        tasks: ['jshint', 'apidoc', 'develop', 'delayed-livereload']
       },
       css: {
         files: [
@@ -83,9 +94,11 @@ module.exports = function (grunt) {
   grunt.registerTask('default', [
     'stylus',
     'jshint',
+    'apidoc',
     'develop',
     'watch'
   ]);
 
   grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks('grunt-apidoc');
 };
