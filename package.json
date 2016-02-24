@@ -1,6 +1,10 @@
 {
-  "name": "project1",
+  "name": "FixYourStreet",
   "version": "0.0.1",
+  "apidoc": {
+    "title": "FixYourStreet apiDoc",
+    "url" : "https://localhost:3000/api/v1"
+  },
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -27,14 +31,5 @@
     "load-grunt-tasks": "^3.2.0",
     "request": "^2.60.0",
     "time-grunt": "^1.2.1"
-  },
-  "apidoc": {
-      "name": "FixYourStreet",
-      "version": "0.0.1",
-      "description": "apiDoc basic example",
-      "apidoc": {
-        "title": "Custom apiDoc browser title",
-        "url" : "https://api.github.com/v1"
-    }
   }
 }
