@@ -2,7 +2,7 @@ var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose'),
   Tag = mongoose.model('Tag'),
-  User = mongoose.model('User');
+  toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
   app.use('/api/v1/tags', router);
@@ -21,18 +21,23 @@ module.exports = function (app) {
  * @apiSuccess {String} description  Description of the Tag.
  */
 
-router.post('/', CheckAuthorization,function (req, res, next) {
+router.post('/',toolsFYS.CheckAuthorization, function (req, res, next) {
+    // Only allow Staff to add a tag
+    if(req.userRole == 'staff'){
+      var tag = new Tag(req.body);
 
-    var tag = new Tag(req.body);
+      tag.save(function (err, createdTag) {
+        if (err) {
+          res.status(500).send(err);
+          return;
+        }
 
-    tag.save(function (err, createdTag) {
-      if (err) {
-        res.status(500).send(err);
-        return;
-      }
-
-      res.send(createdTag);
-    });
+        res.send(createdTag);
+      });
+    }else{
+      res.status(403).send('User not authorized');
+      return;
+    }
 });
 
 /**
@@ -47,31 +52,36 @@ router.post('/', CheckAuthorization,function (req, res, next) {
  * @apiSuccess {String} description  Description of the Tag.
  */
 
-router.put('/:id', function (req, res, next) {
+router.put('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
+  // Only allow Staff to update a tag
+  if(req.userRole == 'staff'){
+    var tagId = req.params.id;
 
-  var tagId = req.params.id;
-
-  Tag.findById(tagId, function(err, tag) {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    } else if (!tag) {
-      res.status(404).send('Tag not found');
-      return;
-    }
-
-    tag._id = req.body._id;
-    tag.description = req.body.description;
-
-    tag.save(function(err, updatedTag) {
+    Tag.findById(tagId, function(err, tag) {
       if (err) {
         res.status(500).send(err);
         return;
+      } else if (!tag) {
+        res.status(404).send('Tag not found');
+        return;
       }
 
-      res.send(updatedTag);
+      tag._id = req.body._id;
+      tag.description = req.body.description;
+
+      tag.save(function(err, updatedTag) {
+        if (err) {
+          res.status(500).send(err);
+          return;
+        }
+
+        res.send(updatedTag);
+      });
     });
-  });
+  }else{
+    res.status(403).send('User not authorized');
+    return;
+  }
 });
 
 /**
@@ -82,55 +92,24 @@ router.put('/:id', function (req, res, next) {
  * @apiSuccess {String} id Name of the Tag
  */
 
- router.delete('/:id', function (req, res, next) {
+ router.delete('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
+  // Only allow Staff to delete a tag
+  if(req.userRole == 'staff'){
+    var tagId = req.params.id;
 
-  var tagId = req.params.id;
+    Person.remove({
+      _id: tagId
+    }, function(err, data) {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
 
-  Person.remove({
-    _id: tagId
-  }, function(err, data) {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
-
-    console.log('Deleted ' + data + ' documents');
-    res.sendStatus(204);
-  });
+      console.log('Deleted ' + data + ' documents');
+      res.sendStatus(204);
+    });
+  }else{
+    res.status(403).send('User not authorized');
+    return;
+  }
 });
-
-// Check if the user has the authorization
-function CheckAuthorization(req, res, next){
-  var criteria = {};
-  criteria._id = req.get("X-USERID");
-  criteria.password = req.get("X-USERHASH");
-  /*
-  User.findById(req.get("X-USERID"), function(err, book) {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    } else if (!book) {
-      res.status(404).send('Book not found');
-      return;
-    }
-    console.log(book);
-  req.book = book;
-  next();
-  });
-  */
-  User.find(criteria)
-  .exec(function(err, user) {
-    if (err) {
-      res.status(403).send(err);
-      return;
-    }
-    if(!user.length){
-      res.status(403).send('User is undefined');
-      return;
-    }
-
-    res.user = user;
-    console.log(user);
-    next();
-  });
-}

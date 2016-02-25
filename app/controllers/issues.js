@@ -1,7 +1,8 @@
 var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose'),
-  Issue = mongoose.model('Issue');
+  Issue = mongoose.model('Issue'),
+  toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
   app.use('/api/v1/issues', router);
@@ -82,5 +83,3 @@ router.get('/:id', function (req, res, next) {
     res.send(issue);
   });
 });
-
-
