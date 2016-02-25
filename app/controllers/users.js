@@ -79,9 +79,11 @@ router.get('/:id', function (req, res, next) {
   });
 });
 
+
+//à finir
 router.get('/api/v1/users?role=staff', function (req, res, next) {
 
-  var userRole = req-params.role;
+  var userRole = req.params.role;
 
   User.findStaff(userRole, function(err, user) {
     if (err) {
@@ -91,7 +93,7 @@ router.get('/api/v1/users?role=staff', function (req, res, next) {
       res.status(404).send('User not found');
       return;
     }
-
+    
     res.send(user);
   });
 });
