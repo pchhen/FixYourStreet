@@ -37,6 +37,7 @@ router.post('/', function (req, res, next) {
 router.put('/:id', function (req, res, next) {
 
   var userId = req.params.id;
+  
 
   User.findById(userId, function(err, user) {
     if (err) {
@@ -56,7 +57,6 @@ router.put('/:id', function (req, res, next) {
         res.status(500).send(err);
         return;
       }
-
       res.send(updatedUser);
     });
   });
@@ -80,23 +80,15 @@ router.get('/:id', function (req, res, next) {
 });
 
 
-//à finir
-router.get('/api/v1/users?role=staff', function (req, res, next) {
+router.get('/api/v1/users', function (req, res, next) {
 
-  var userRole = req.params.role;
-
-  User.findStaff(userRole, function(err, user) {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    } else if (!user) {
-      res.status(404).send('User not found');
-      return;
-    }
-    
-    res.send(user);
+  var userRole = req.query.role;
+console.log(userRole);
+console.log("hello");
+  var users = User.where("role").equals(userRole);
+    res.send(users);
   });
-});
+
 
 router.delete('/:id', function (req, res, next) {
 

@@ -43,7 +43,7 @@ router.put('/:id', function (req, res, next) {
       res.status(500).send(err);
       return;
     } else if (!issue) {
-      res.status(404).send('User not found');
+      res.status(404).send('Issue not found');
       return;
     }
 
