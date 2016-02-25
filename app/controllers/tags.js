@@ -97,7 +97,7 @@ router.put('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
   if(req.userRole == 'staff'){
     var tagId = req.params.id;
 
-    Person.remove({
+    Tag.remove({
       _id: tagId
     }, function(err, data) {
       if (err) {
@@ -112,4 +112,61 @@ router.put('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
     res.status(403).send('User not authorized');
     return;
   }
+});
+
+/**
+ * @api {get} /tags/:id Get a list of tags
+ * @apiName GetAllTags
+ * @apiGroup Tag
+ *
+ * @apiSuccess {String} id Name of the Tag
+ * @apiSuccess {String} description Description of the Tag
+ */
+
+router.get('/',toolsFYS.CheckAuthorization, function (req, res, next) {
+ // Only allow Staff to delete a tag
+ if(req.userRole == 'staff'){
+   Tag.find(function (err, tags) {
+    if (err) {
+      res.status(500).send(err);
+      return;
+    }
+
+    res.send(tags);
+  });
+ }else{
+   res.status(403).send('User not authorized');
+   return;
+ }
+});
+
+/**
+ * @api {get} /tags/:id Get a tag
+ * @apiName GetATag
+ * @apiGroup Tag
+ *
+ * @apiSuccess {String} id Name of the Tag
+ * @apiSuccess {String} description Description of the Tag
+ */
+
+router.get('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
+ // Only allow Staff to delete a tag
+ if(req.userRole == 'staff'){
+   var tagId = req.params.id;
+
+  Tag.findById(tagId, function(err, tag) {
+    if (err) {
+      res.status(500).send(err);
+      return;
+    } else if (!tag) {
+      res.status(404).send('Tag not found');
+      return;
+    }
+
+    res.send(tag);
+  });
+ }else{
+   res.status(403).send('User not authorized');
+   return;
+ }
 });
