@@ -1,7 +1,8 @@
 var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose'),
-  Tag = mongoose.model('Tag');
+  Tag = mongoose.model('Tag'),
+  User = mongoose.model('User');
 
 module.exports = function (app) {
   app.use('/api/v1/tags', router);
@@ -103,15 +104,33 @@ function CheckAuthorization(req, res, next){
   var criteria = {};
   criteria._id = req.get("X-USERID");
   criteria.password = req.get("X-USERHASH");
-
-  User.find(criteria)
-  .exec(function(err, books) {
+  /*
+  User.findById(req.get("X-USERID"), function(err, book) {
     if (err) {
       res.status(500).send(err);
-    return;
+      return;
+    } else if (!book) {
+      res.status(404).send('Book not found');
+      return;
     }
-    res.send(books);
+    console.log(book);
+  req.book = book;
+  next();
+  });
+  */
+  User.find(criteria)
+  .exec(function(err, user) {
+    if (err) {
+      res.status(403).send(err);
+      return;
+    }
+    if(!user.length){
+      res.status(403).send('User is undefined');
+      return;
+    }
 
+    res.user = user;
+    console.log(user);
     next();
-
+  });
 }
