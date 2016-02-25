@@ -23,6 +23,66 @@
     "groupTitle": "Tag"
   },
   {
+    "type": "get",
+    "url": "/tags/:id",
+    "title": "Get a tag",
+    "name": "GetATag",
+    "group": "Tag",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Name of the Tag</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Description of the Tag</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "app/controllers/tags.js",
+    "groupTitle": "Tag"
+  },
+  {
+    "type": "get",
+    "url": "/tags/:id",
+    "title": "Get a list of tags",
+    "name": "GetAllTags",
+    "group": "Tag",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Name of the Tag</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Description of the Tag</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "app/controllers/tags.js",
+    "groupTitle": "Tag"
+  },
+  {
     "type": "post",
     "url": "/tags/",
     "title": "Create a tag",
