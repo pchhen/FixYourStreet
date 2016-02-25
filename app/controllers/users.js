@@ -43,9 +43,6 @@ router.put('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
   // Only allow Staff to update a user
   if(req.userRole == 'staff'){
     var userId = req.params.id;
-
-
-  var userId = req.params.id;
   
 
     User.findById(userId, function(err, user) {
