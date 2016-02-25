@@ -123,7 +123,6 @@ router.get('/api/v1/users', function (req, res, next) {
 
   var userRole = req.query.role;
 console.log(userRole);
-console.log("hello");
   var users = User.where("role").equals(userRole);
     res.send(users);
   });
