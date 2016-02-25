@@ -3,7 +3,6 @@ https://github.com/blakehaswell/mongoose-unique-validator
 http://stackoverflow.com/questions/14588032/mongoose-password-hashing
 http://blog.mongodb.org/post/32866457221/password-authentication-with-mongoose-part-1
 */
-var uniqueValidator = require('mongoose-unique-validator');
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
@@ -14,5 +13,4 @@ var UserSchema = new Schema({
   password: { type: String, required: true }
 });
 
-UserSchema.plugin(uniqueValidator);
 mongoose.model('User', UserSchema);

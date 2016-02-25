@@ -18,12 +18,10 @@ var IssueSchema = new Schema({
   description: { type: String, required: true },
   status: { type: String, required: true, enum: StatusAvailable },
   location: { type: [Number], index: { type: '2dsphere', sparse: true}},
-  author: {type: Schema.Types.ObjectId, ref: 'User'},// Contain the full username, no need of populating
-  assignedStaff: {type: Schema.Types.ObjectId, ref: 'User'}, // Contain the full username, no need of populating
-  tags: [{type: Schema.Types.ObjectId, ref: 'Tag'}],// Contain the full tagname, no need of populating
+  author: {type: Schema.Types.String, ref: 'User'},// Contain the full username, no need of populating
+  assignedStaff: {type: Schema.Types.String, ref: 'User'}, // Contain the full username, no need of populating
+  tags: [{type: Schema.Types.String, ref: 'Tag'}],// Contain the full tagname, no need of populating
   actions:[ActionSchema]
 });
-
-/*{type: Schema.Types.ObjectId, ref: 'User'},*/
 
 mongoose.model('Issue', IssueSchema);
