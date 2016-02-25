@@ -13,27 +13,39 @@ module.exports = function (app) {
  * @apiName PostTag
  * @apiGroup Tag
  *
- * @apiParam {Number} id Users unique ID.
+ * @apiParam {String} id Unique name of the Tag.
+ * @apiParam {String} description  Description of the Tag.
  *
- * @apiSuccess {String} _id username
- * @apiSuccess {String} description  Lastname of the User.
+ * @apiSuccess {String} id Name of the Tag
+ * @apiSuccess {String} description  Description of the Tag.
  */
 
-router.post('/', function (req, res, next) {
+router.post('/', CheckAuthorization,function (req, res, next) {
 
-  var tag = new Tag(req.body);
+    var tag = new Tag(req.body);
 
-  tag.save(function (err, createdTag) {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
+    tag.save(function (err, createdTag) {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
 
-    res.send(createdTag);
-  });
+      res.send(createdTag);
+    });
 });
 
-// PUT /api/tags/:id
+/**
+ * @api {put} /tags/:id Update a tag
+ * @apiName PutTag
+ * @apiGroup Tag
+ *
+ * @apiParam {String} id Unique name of the Tag.
+ * @apiParam {String} description  Description of the Tag.
+ *
+ * @apiSuccess {String} id Name of the Tag
+ * @apiSuccess {String} description  Description of the Tag.
+ */
+
 router.put('/:id', function (req, res, next) {
 
   var tagId = req.params.id;
@@ -60,3 +72,46 @@ router.put('/:id', function (req, res, next) {
     });
   });
 });
+
+/**
+ * @api {delete} /tags/:id Delete a tag
+ * @apiName DeleteTag
+ * @apiGroup Tag
+ *
+ * @apiSuccess {String} id Name of the Tag
+ */
+
+ router.delete('/:id', function (req, res, next) {
+
+  var tagId = req.params.id;
+
+  Person.remove({
+    _id: tagId
+  }, function(err, data) {
+    if (err) {
+      res.status(500).send(err);
+      return;
+    }
+
+    console.log('Deleted ' + data + ' documents');
+    res.sendStatus(204);
+  });
+});
+
+// Check if the user has the authorization
+function CheckAuthorization(req, res, next){
+  var criteria = {};
+  criteria._id = req.get("X-USERID");
+  criteria.password = req.get("X-USERHASH");
+
+  User.find(criteria)
+  .exec(function(err, books) {
+    if (err) {
+      res.status(500).send(err);
+    return;
+    }
+    res.send(books);
+
+    next();
+
+}
