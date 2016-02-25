@@ -44,10 +44,10 @@ router.put('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
   if(req.userRole == 'staff'){
     var userId = req.params.id;
 
-<<<<<<< HEAD
+
   var userId = req.params.id;
   
-=======
+
     User.findById(userId, function(err, user) {
       if (err) {
         res.status(500).send(err);
@@ -56,7 +56,7 @@ router.put('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
         res.status(404).send('User not found');
         return;
       }
->>>>>>> origin/master
+
 
       user._id = req.body._id;
       user.role = req.body.role;
@@ -89,13 +89,13 @@ router.delete('/:id', function (req, res, next) {
         res.status(500).send(err);
         return;
       }
-<<<<<<< HEAD
+
       res.send(updatedUser);
-=======
+
 
       console.log('Deleted ' + data + ' documents');
       res.sendStatus(204);
->>>>>>> origin/master
+
     });
   }else{
     res.status(403).send('User not authorized');
@@ -121,7 +121,7 @@ router.get('/:id',toolsFYS.CheckAuthorization, function (req, res, next) {
 });
 
 
-<<<<<<< HEAD
+
 router.get('/api/v1/users', function (req, res, next) {
 
   var userRole = req.query.role;
@@ -148,7 +148,7 @@ router.delete('/:id', function (req, res, next) {
     res.sendStatus(204);
   });
 });
-=======
+
 router.get('/api/v1/users?role=staff', function (req, res, next) {
 
   var userRole = req.params.role;
@@ -165,4 +165,3 @@ router.get('/api/v1/users?role=staff', function (req, res, next) {
     res.send(user);
   });
 });
->>>>>>> origin/master
