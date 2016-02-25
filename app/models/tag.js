@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 var TagSchema = new Schema({
-  name: { type: String, required: true },
+  _id: { type: String, required: true }, /*contain the name for referencing optimisation in issue. Unique by default */
   description: { type: String, required: true }
 });
 
