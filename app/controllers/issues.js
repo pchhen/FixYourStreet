@@ -24,7 +24,7 @@ module.exports = function (app) {
  issues/:id/actions ->
  type
  content
- 
+
  */
 
 router.post('/', function (req, res, next) {
@@ -98,10 +98,10 @@ router.get('/', function (req, res, next) {
         criteria.author = req.query.author;
     }
     if (req.query.types) {
-        criteria.type = req.query.types;
+        criteria.type = req.query.type;
     }
 
-    Issue.find(criteria).exec(function (err, issues) {
+    Issue.find(criteria).populate('author').exec(function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -109,44 +109,4 @@ router.get('/', function (req, res, next) {
         res.send(issues);
     });
 
-});
-
-
-
-
-router.post('/issues/:id/comments', toolsFYS.CheckAuthorization, function (req, res, next) {
-    req.issues.actions.push(req.body);
-    req.issues.save(function (err, updatedIssues) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-
-        res.send(updatedIssues.actions[updatedIssues.actions.length - 1]);
-    });
-});
-
-
-
-router.put('/statusChange/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
-    // Only allow Staff to add a user
-    //var actionType = req.params.type;
-    var issueId = req.params.id;
-    Issue.findById(issueId, function (err, issue) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        } else if (!issue) {
-            res.status(404).send('Issue not found');
-            return;
-        }
-        issue.status = req.body.status;
-        issue.save(function (err, updatedIssue) {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
-            res.send(updatedIssue);
-        });
-    });
 });

@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
         Action = mongoose.model('Action'),
         Schema = mongoose.Schema;
 
-
+var ActionTypes = 'statutChange comment'.split(' ');
 var StatusAvailable = 'created acknowledged assigned in_progress solved rejected'.split(' ');
 var IssueSchema = new Schema({
     name: {type: String, required: true},
@@ -20,6 +20,11 @@ var IssueSchema = new Schema({
             author: {type: Schema.Types.String, ref: 'User'}
         }
     ]
+});
+
+IssueSchema.virtual('actions.date')
+  .get(function(){
+    return this._id.getTimestamp();
 });
 
 mongoose.model('Issue', IssueSchema);
