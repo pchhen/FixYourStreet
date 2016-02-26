@@ -2,6 +2,7 @@ var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         Issue = mongoose.model('Issue'),
+        Action = mongoose.model('Action'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
@@ -55,14 +56,14 @@ router.put('/:id', function (req, res, next) {
 
 //        issue._id = req.body._id;
         issue.name = req.body.name;
-//        issue.description = req.body.description;
-//        issue.status = req.body.status;
-//        issue.location = req.body.location;
-//        issue.author = req.body.author;
-//        issue.assignedStaff = req.body.assignedStaff;
-//        issue.type = req.body.type;
-//        issue.tags = req.body.tags;
-//        issue.action = req.body.action;
+        issue.description = req.body.description;
+        issue.status = req.body.status;
+        issue.location = req.body.location;
+        issue.author = req.body.author;
+        issue.assignedStaff = req.body.assignedStaff;
+        issue.type = req.body.type;
+        issue.tags = req.body.tags;
+        issue.action = req.body.action;
 
         issue.save(function (err, updatedIssue) {
             if (err) {
@@ -99,5 +100,30 @@ router.get('/', function (req, res, next) {
             return;
         }
         res.send(issues);
+    });
+});
+
+
+router.put('/comment/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
+    var issueId = req.params.id;
+    var action = new Action(req.body);
+    action.save();
+
+    Issue.findById(issueId, function (err, issue) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        } else if (!issue) {
+            res.status(404).send('Issue not found');
+            return;
+        }
+        issue.action = action;
+        issue.save(function (err, updatedIssue) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            res.send(updatedIssue);
+        });
     });
 });
