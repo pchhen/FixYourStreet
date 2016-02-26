@@ -2,6 +2,7 @@ var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         User = mongoose.model('User'),
+        Issue = mongoose.model('Issue'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
@@ -103,29 +104,154 @@ router.get('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
     }
 });
 
-
 router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
     // Only allow Staff to delete a user
     if (req.userRole == 'staff') {
       var criteria = {};
 
-      // Filter by role
-      if (req.query.role) {
-          criteria.role = req.query.role;
-      }
+        // Filter by role
+        if (req.query.role) {
+            criteria.role = req.query.role;
+        }
 
-      User.find(criteria)
-        .sort('_id')
-        .exec(function(err, users) {
+        // Filter by format
+        if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
+          // If format is an array, match all books which format is included in the array.
+          criteria.format = { $in: req.query.format };
+        } else if (req.query.format) {
+          // If format is a string, match only books that have that specific format.
+          criteria.format = req.query.format;
+        }
+
+        // Filter by status issues (aggregation with issue)
+        if(req.query.issueStatusIs || req.query.issueStatusIsNot){
+          // Complex filter by issue status with boolean operator
+          if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
+
+          }
+          else{
+
+          }
+        }
+
+
+
+
+
+
+        // Get page and page size for pagination.
+        var page = req.query.page ? parseInt(req.query.page, 10) : 1,
+            pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 30;
+
+        // Convert page and page size to offset and limit.
+        var offset = (page - 1) * pageSize,
+            limit = pageSize;
+
+        // Count all users (without filters).
+        countAllUsers = function (callback) {
+          User.count(function(err, totalCount) {
+            if (err) {
+              callback(err);
+            } else {
+              callback(undefined, totalCount);
+            }
+          });
+        };
+
+        // Count books matching the filters.
+        countFilteredUsers = function (callback) {
+          User.count(criteria, function(err, filteredCount) {
+            if (err) {
+              callback(err);
+            } else {
+              callback(undefined, filteredCount);
+            }
+          });
+        };
+
+        // Find books matching the filters.
+        findMatchingUsers = function (callback) {
+
+          var query = User
+            .find(criteria)
+            // Do not forget to sort, as pagination makes more sense with sorting.
+            .sort('_id')
+            .skip(offset)
+            .limit(limit);
+
+          // Embed issue object if specified in the query.
+          if (req.query.embed == 'issue') {
+            query = query.populate('issue');
+          }
+
+          // Execute the query.
+          query.exec(function(err, users) {
+            if (err) {
+              callback(err);
+            } else {
+              callback(undefined, users);
+            }
+          });
+        };
+
+        // Set the pagination headers and send the matching books in the body.
+        sendResponse = function (err, results) {
           if (err) {
             res.status(500).send(err);
             return;
           }
 
-        res.send(users);
-        });
+          var totalCount = results[0],
+              filteredCount = results[1],
+              users = results[2];
+
+          // Return the pagination data in headers.
+          res.set('X-Pagination-Page', page);
+          res.set('X-Pagination-Page-Size', pageSize);
+          res.set('X-Pagination-Total', totalCount);
+          res.set('X-Pagination-Filtered-Total', filteredCount);
+
+          res.send(users);
+        };
+
+      async.parallel([
+        countAllUsers,
+        countFilteredUsers,
+        findMatchingUsers
+      ], sendResponse);
     } else {
         res.status(401).send('User not authorized');
         return;
     }
+});
+
+function
+
+User.aggregate([
+  {
+    $match: {
+      format: { $in: formats }
+    }
+  },
+  {
+    $group: {
+      _id: '$user',
+      total: { $sum: 1 }
+    }
+  },
+  {
+    $sort: { total: -1 }
+  },
+  {
+    $skip: 60
+  },
+  {
+    $limit: 30
+  }
+], function(err, userCounts) {
+  if (err) {
+    res.status(500).send(err);
+    return;
+  }
+
 });
