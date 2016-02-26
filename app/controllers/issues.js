@@ -42,7 +42,7 @@ router.put('/:id', function (req, res, next) {
         issue.location = req.body.location;
         issue.author = req.body.author;
         issue.assignedStaff = req.body.assignedStaff;
-        issue.types = req.body.types;
+        issue.type = req.body.type;
         issue.tags = req.body.tags;
 
         issue.save(function (err, updatedIssue) {

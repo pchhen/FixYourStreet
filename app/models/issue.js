@@ -20,8 +20,8 @@ var IssueSchema = new Schema({
   location: { type: [Number], index: { type: '2dsphere', sparse: true}},
   author: {type: Schema.Types.String, ref: 'User'},// Contain the full username, no need of populating
   assignedStaff: {type: Schema.Types.String, ref: 'User'}, // Contain the full username, no need of populating
-  types: [{type: Schema.Types.String, ref: 'Type'}],// Contain the full tagname, no need of populating
-  //tags:{type: Array},
+  type: {type: Schema.Types.String, ref: 'Type'},// Contain the full tagname, no need of populating
+  tags:{type: Array},
   actions:[ActionSchema]
 });
 
