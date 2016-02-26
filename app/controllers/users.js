@@ -8,7 +8,6 @@ module.exports = function (app) {
     app.use('/api/v1/users', router);
 };
 
-
 router.post('/', function (req, res, next) {
 
     var user = new User(req.body);
@@ -42,38 +41,38 @@ router.post('/', toolsFYS.CheckAuthorization, function (req, res, next) {
     }
 });
 
-//router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
-//    // Only allow Staff to update a user
-//    if (req.userRole == 'staff') {
-//        var userId = req.params.id;
-//
-//        User.findById(userId, function (err, user) {
-//            if (err) {
-//                res.status(500).send(err);
-//                return;
-//            } else if (!user) {
-//                res.status(404).send('User not found');
-//                return;
-//            }
-//
-//            user._id = req.body._id;
-//            user.role = req.body.role;
-//            user.password = req.body.password;
-//
-//            user.save(function (err, updatedUser) {
-//                if (err) {
-//                    res.status(500).send(err);
-//                    return;
-//                }
-//
-//                res.send(updatedUser);
-//            });
-//        });
-//    } else {
-//        res.status(403).send('User not authorized');
-//        return;
-//    }
-//});
+router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
+    // Only allow Staff to update a user
+    if (req.userRole == 'staff') {
+        var userId = req.params.id;
+
+        User.findById(userId, function (err, user) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            } else if (!user) {
+                res.status(404).send('User not found');
+                return;
+            }
+
+            user._id = req.body._id;
+            user.role = req.body.role;
+            user.password = req.body.password;
+
+            user.save(function (err, updatedUser) {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+
+                res.send(updatedUser);
+            });
+        });
+    } else {
+        res.status(403).send('User not authorized');
+        return;
+    }
+});
 
 router.delete('/:id', function (req, res, next) {
     // Only allow Staff to delete a user
@@ -119,7 +118,6 @@ router.get('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
 });
 
 
-
 router.get('/api/v1/users', function (req, res, next) {
 
     var userRole = req.query.role;
@@ -132,24 +130,6 @@ router.get('/api/v1/users', function (req, res, next) {
         res.send(users);
     });
 
-});
-
-
-router.delete('/:id', function (req, res, next) {
-
-    var userId = req.params.id;
-
-    User.remove({
-        _id: userId
-    }, function (err, data) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-
-        console.log('Deleted ' + data + ' documents');
-        res.sendStatus(204);
-    });
 });
 
 //router.get('/api/v1/users', function (req, res, next) {

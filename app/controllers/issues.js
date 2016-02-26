@@ -8,9 +8,6 @@ module.exports = function (app) {
     app.use('/api/v1/issues', router);
 };
 
-
-
-
 router.post('/', function (req, res, next) {
 
     var issue = new Issue(req.body);
@@ -24,7 +21,6 @@ router.post('/', function (req, res, next) {
         res.send(createdIssue);
     });
 });
-
 
 router.put('/:id', function (req, res, next) {
 
@@ -49,7 +45,6 @@ router.put('/:id', function (req, res, next) {
         issue.types = req.body.types;
         issue.tags = req.body.tags;
 
-
         issue.save(function (err, updatedIssue) {
             if (err) {
                 res.status(500).send(err);
@@ -64,7 +59,6 @@ router.put('/:id', function (req, res, next) {
 router.get('/:id', function (req, res, next) {
 
     var issueId = req.params.id;
-
     Issue.findById(issueId, function (err, issue) {
         if (err) {
             res.status(500).send(err);
@@ -73,7 +67,6 @@ router.get('/:id', function (req, res, next) {
             res.status(404).send('Issue not found');
             return;
         }
-
         res.send(issue);
     });
 });
@@ -88,5 +81,4 @@ router.get('/api/v1/issues', function (req, res, next) {
         }
         res.send(issues);
     });
-
 });
