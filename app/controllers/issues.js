@@ -10,22 +10,22 @@ module.exports = function (app) {
 };
 
 /*
-params:
-issues ->
-  user
-  type
-  region
-distance
-limit
-  statusIs
-  statusIsNot
-  since
-  until
-issues/:id/actions ->
-  type
-  content
-
-*/
+ params:
+ issues ->
+ user
+ type
+ region
+ distance
+ limit
+ statusIs
+ statusIsNot
+ since
+ until
+ issues/:id/actions ->
+ type
+ content
+ 
+ */
 
 router.post('/', function (req, res, next) {
 
@@ -93,22 +93,45 @@ router.get('/:id', function (req, res, next) {
 
 router.get('/', function (req, res, next) {
 
-    var issueType = req.query.types;
-    Issue.where("type").equals(issueType).exec(function (err, issues) {
+    var criteria = {};
+    if (req.query.author) {
+        criteria.author = req.query.author;
+    }
+    if (req.query.types) {
+        criteria.type = req.query.types;
+    }
+
+    Issue.find(criteria).exec(function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;
         }
         res.send(issues);
     });
+
 });
 
 
-router.put('/comment/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
-    var issueId = req.params.id;
-    var action = new Action(req.body);
-    action.save();
 
+
+router.post('/issues/:id/comments', toolsFYS.CheckAuthorization, function (req, res, next) {
+    req.issues.actions.push(req.body);
+    req.issues.save(function (err, updatedIssues) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+
+        res.send(updatedIssues.actions[updatedIssues.actions.length - 1]);
+    });
+});
+
+
+
+router.put('/statusChange/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
+    // Only allow Staff to add a user
+    //var actionType = req.params.type;
+    var issueId = req.params.id;
     Issue.findById(issueId, function (err, issue) {
         if (err) {
             res.status(500).send(err);
@@ -117,7 +140,7 @@ router.put('/comment/:id', toolsFYS.CheckAuthorization, function (req, res, next
             res.status(404).send('Issue not found');
             return;
         }
-        issue.action = action;
+        issue.status = req.body.status;
         issue.save(function (err, updatedIssue) {
             if (err) {
                 res.status(500).send(err);

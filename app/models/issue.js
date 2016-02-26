@@ -13,7 +13,13 @@ var IssueSchema = new Schema({
     assignedStaff: {type: Schema.Types.String, ref: 'User'}, // Contain the full username, no need of populating
     type: {type: Schema.Types.String, ref: 'Type'}, // Contain the full tagname, no need of populating
     tags: {type: Array},
-    actions: [Action]
+    actions: [
+        {
+            type: {type: String, required: true, enum: ActionTypes},
+            content: {type: String, required: true},
+            author: {type: Schema.Types.String, ref: 'User'}
+        }
+    ]
 });
 
 mongoose.model('Issue', IssueSchema);
