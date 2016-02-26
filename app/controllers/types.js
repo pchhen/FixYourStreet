@@ -22,7 +22,7 @@ router.post('/', toolsFYS.CheckAuthorization, function (req, res, next) {
             res.send(createdType);
         });
     } else {
-        res.status(403).send('User not authorized');
+        res.status(401).send('User not authorized');
         return;
     }
 });
@@ -37,7 +37,7 @@ router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
                 res.status(500).send(err);
                 return;
             } else if (!type) {
-                res.status(404).send('Type not found');
+                res.status(404).send('No Type found');
                 return;
             }
 
@@ -54,7 +54,7 @@ router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
             });
         });
     } else {
-        res.status(403).send('User not authorized');
+        res.status(401).send('User not authorized');
         return;
     }
 });
@@ -77,7 +77,7 @@ router.delete('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
             res.sendStatus(204);
         });
     } else {
-        res.status(403).send('User not authorized');
+        res.status(401).send('User not authorized');
         return;
     }
 });
@@ -91,14 +91,14 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
                 res.status(500).send(err);
                 return;
             }else if (!types.length) {
-                res.status(404).send('Types not found');
+                res.status(404).send('No Type found');
                 return;
             }
 
             res.send(types);
         });
     } else {
-        res.status(403).send('User not authorized');
+        res.status(401).send('User not authorized');
         return;
     }
 });
@@ -121,7 +121,7 @@ router.get('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
             res.send(type);
         });
     } else {
-        res.status(403).send('User not authorized');
+        res.status(401).send('User not authorized');
         return;
     }
 });
