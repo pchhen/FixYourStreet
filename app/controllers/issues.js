@@ -74,7 +74,7 @@ router.get('/:id', function (req, res, next) {
 router.get('/api/v1/issues', function (req, res, next) {
 
     var issueType = req.query.types;
-    Issue.where("types").equals(issueType).exec(function (err, issues) {
+    Issue.where("type").equals(issueType).exec(function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;

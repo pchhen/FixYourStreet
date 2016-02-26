@@ -129,7 +129,6 @@ router.get('/api/v1/users', function (req, res, next) {
         }
         res.send(users);
     });
-
 });
 
 //router.get('/api/v1/users', function (req, res, next) {
