@@ -32,6 +32,7 @@ router.post('/statusChange/:id', toolsFYS.CheckAuthorization, function (req, res
             res.send(updatedIssue);
         });
     });
+});
 
 //    if (actionType == "comment") {
 //        var issueId = req.params.id;
