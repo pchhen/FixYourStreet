@@ -90,6 +90,9 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
             if (err) {
                 res.status(500).send(err);
                 return;
+            }else if (!types.length) {
+                res.status(404).send('Types not found');
+                return;
             }
 
             res.send(types);
