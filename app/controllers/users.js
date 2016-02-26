@@ -1,4 +1,5 @@
-var express = require('express'),
+var async = require('async'),
+        express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         User = mongoose.model('User'),
@@ -107,20 +108,19 @@ router.get('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
 router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
     // Only allow Staff to delete a user
     if (req.userRole == 'staff') {
+      // Get page and page size for pagination.
+      var page = req.query.page ? parseInt(req.query.page, 10) : 1,
+          pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 30;
+
+      // Convert page and page size to offset and limit.
+      var offset = (page - 1) * pageSize,
+          limit = pageSize;
+
       var criteria = {};
 
         // Filter by role
         if (req.query.role) {
             criteria.role = req.query.role;
-        }
-
-        // Filter by format
-        if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
-          // If format is an array, match all books which format is included in the array.
-          criteria.format = { $in: req.query.format };
-        } else if (req.query.format) {
-          // If format is a string, match only books that have that specific format.
-          criteria.format = req.query.format;
         }
 
         // Filter by status issues (aggregation with issue)
@@ -129,7 +129,44 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
           if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
 
           }
-          else{
+          else if (req.query.issueStatusIs){
+            statuss = req.query.issueStatusIs;
+            console.log(req.query.issueStatusIs);
+
+
+
+
+            Issue.aggregate([
+              {
+                $match: {
+                  status: "created" }
+              },
+              {
+                $group: {
+                  _id: '$author',
+                  total: { $sum: 1 }
+                }
+              },
+              {
+                $sort: { total: -1 }
+              },
+              {
+                $skip: offset
+              },
+              {
+                $limit: limit
+              }
+            ], function(err, userCounts) {
+              if (err) {
+                res.status(500).send(err);
+                return;
+              }
+              console.log(userCounts);
+
+            });
+
+          }
+          else if (req.query.issueStatusIsNot){
 
           }
         }
@@ -139,13 +176,7 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
 
 
 
-        // Get page and page size for pagination.
-        var page = req.query.page ? parseInt(req.query.page, 10) : 1,
-            pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 30;
 
-        // Convert page and page size to offset and limit.
-        var offset = (page - 1) * pageSize,
-            limit = pageSize;
 
         // Count all users (without filters).
         countAllUsers = function (callback) {
@@ -179,10 +210,6 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
             .skip(offset)
             .limit(limit);
 
-          // Embed issue object if specified in the query.
-          if (req.query.embed == 'issue') {
-            query = query.populate('issue');
-          }
 
           // Execute the query.
           query.exec(function(err, users) {
@@ -225,33 +252,36 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
     }
 });
 
-function
+function GroupUsersByIssues (req, res, next){
 
-User.aggregate([
-  {
-    $match: {
-      format: { $in: formats }
+  Issue.aggregate([
+    {
+      $match: {
+        status: { $in: status }
+      }
+    },
+    {
+      $group: {
+        _id: '$author',
+        total: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { total: -1 }
+    },
+    {
+      $skip: offset
+    },
+    {
+      $limit: limit
     }
-  },
-  {
-    $group: {
-      _id: '$user',
-      total: { $sum: 1 }
+  ], function(err, userCounts) {
+    if (err) {
+      res.status(500).send(err);
+      return;
     }
-  },
-  {
-    $sort: { total: -1 }
-  },
-  {
-    $skip: 60
-  },
-  {
-    $limit: 30
-  }
-], function(err, userCounts) {
-  if (err) {
-    res.status(500).send(err);
-    return;
-  }
+    console.log(userCounts);
+    callback(undefined, userCounts);
 
-});
+  });
+}
