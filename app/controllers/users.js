@@ -8,23 +8,18 @@ module.exports = function (app) {
     app.use('/api/v1/users', router);
 };
 
-router.post('/', toolsFYS.CheckAuthorization, function (req, res, next) {
-    // Only allow Staff to add a user
-    if (req.userRole == 'staff') {
-        var user = new User(req.body);
+router.post('/', function (req, res, next) {
 
-        user.save(function (err, createdUser) {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
+    var user = new User(req.body);
 
-            res.send(createdUser);
-        });
-    } else {
-        res.status(403).send('User not authorized');
-        return;
-    }
+    user.save(function (err, createdUser) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+
+        res.send(createdUser);
+    });
 });
 
 router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
@@ -55,7 +50,7 @@ router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
             });
         });
     } else {
-        res.status(403).send('User not authorized');
+        res.status(401).send('User not authorized');
         return;
     }
 });
@@ -81,55 +76,56 @@ router.delete('/:id', function (req, res, next) {
 
         });
     } else {
-        res.status(403).send('User not authorized');
+        res.status(401).send('User not authorized');
         return;
     }
 });
 
 router.get('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
+    // Only allow Staff to delete a user
+    if (req.userRole == 'staff') {
+      var userId = req.params.id;
 
-    var userId = req.params.id;
+      User.findById(userId, function (err, user) {
+          if (err) {
+              res.status(500).send(err);
+              return;
+          } else if (!user) {
+              res.status(404).send('User not found');
+              return;
+          }
 
-    User.findById(userId, function (err, user) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        } else if (!user) {
-            res.status(404).send('User not found');
-            return;
-        }
-
-        res.send(user);
-    });
+          res.send(user);
+      });
+    } else {
+        res.status(401).send('User not authorized');
+        return;
+    }
 });
 
 
-router.get('/', function (req, res, next) {
+router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
+    // Only allow Staff to delete a user
+    if (req.userRole == 'staff') {
+      var criteria = {};
 
-    var userRole = req.query.role;
+      // Filter by role
+      if (req.query.role) {
+          criteria.role = req.query.role;
+      }
 
-    User.where("role").equals(userRole).exec(function (err, users) {
-        if (err) {
+      User.find(criteria)
+        .sort('_id')
+        .exec(function(err, users) {
+          if (err) {
             res.status(500).send(err);
             return;
-        }
+          }
+
         res.send(users);
-    });
+        });
+    } else {
+        res.status(401).send('User not authorized');
+        return;
+    }
 });
-
-//router.get('/api/v1/users', function (req, res, next) {
-//
-//    var userRole = req.params.role;
-//
-//    User.findStaff(userRole, function (err, user) {
-//        if (err) {
-//            res.status(500).send(err);
-//            return;
-//        } else if (!user) {
-//            res.status(404).send('User not found');
-//            return;
-//        }
-//
-//        res.send(user);
-//    });
-//});
