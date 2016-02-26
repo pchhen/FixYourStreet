@@ -24,90 +24,46 @@ router.post('/', function (req, res, next) {
     });
 });
 
-router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
-    // Only allow Staff to update a user
-    if (req.userRole == 'staff') {
-        var userId = req.params.id;
+router.put('/:id', toolsFYS.CheckStaffAuthorization, findUser, function (req, res, next) {
+    user._id = req.body._id;
+    user.role = req.body.role;
+    user.password = req.body.password;
 
-        User.findById(userId, function (err, user) {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            } else if (!user) {
-                res.status(404).send('User not found');
-                return;
-            }
+    user.save(function (err, updatedUser) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
 
-            user._id = req.body._id;
-            user.role = req.body.role;
-            user.password = req.body.password;
-
-            user.save(function (err, updatedUser) {
-                if (err) {
-                    res.status(500).send(err);
-                    return;
-                }
-
-                res.send(updatedUser);
-            });
-        });
-    } else {
-        res.status(401).send('User not authorized');
-        return;
-    }
+        res.send(updatedUser);
+    });
 });
 
 router.delete('/:id', function (req, res, next) {
-    // Only allow Staff to delete a user
-    if (req.userRole == 'staff') {
-        var userId = req.params.id;
+    var userId = req.params.id;
 
-        User.remove({
-            _id: userId
-        }, function (err, data) {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
+    User.remove({
+        _id: userId
+    }, function (err, data) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
 
-            res.send(updatedUser);
+        res.send(updatedUser);
 
 
-            console.log('Deleted ' + data + ' documents');
-            res.sendStatus(204);
+        console.log('Deleted ' + data + ' documents');
+        res.sendStatus(204);
 
-        });
-    } else {
-        res.status(401).send('User not authorized');
-        return;
-    }
+    });
 });
 
-router.get('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
-    // Only allow Staff to delete a user
-    if (req.userRole == 'staff') {
-      var userId = req.params.id;
-
-      User.findById(userId, function (err, user) {
-          if (err) {
-              res.status(500).send(err);
-              return;
-          } else if (!user) {
-              res.status(404).send('User not found');
-              return;
-          }
-
-          res.send(user);
-      });
-    } else {
-        res.status(401).send('User not authorized');
-        return;
-    }
+router.get('/:id', toolsFYS.CheckStaffAuthorization, findUser, function (req, res, next) {
+      res.send(user);
 });
 
-router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
-    // Only allow Staff to delete a user
-    if (req.userRole == 'staff') {
+router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
       // Get page and page size for pagination.
       var page = req.query.page ? parseInt(req.query.page, 10) : 1,
           pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 30;
@@ -246,10 +202,6 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
       countFilteredUsers,
       findMatchingUsers
     ], sendResponse);
-  } else {
-      res.status(401).send('User not authorized');
-      return;
-  }
 });
 /*
 function GroupUsersByIssues (criteria, order, offset, limit, callback){
@@ -281,3 +233,18 @@ function GroupUsersByIssues (criteria, order, offset, limit, callback){
 
   });
 }*/
+
+function findUser(req, res, next) {
+  User.findById(req.params.id, function (err, type) {
+      if (err) {
+          res.status(500).send(err);
+          return;
+      } else if (!type) {
+          res.status(404).send('User not found');
+          return;
+      }
+      req.user = user;
+
+      next();
+  });
+}

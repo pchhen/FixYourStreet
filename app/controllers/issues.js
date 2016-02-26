@@ -41,54 +41,29 @@ router.post('/', function (req, res, next) {
     });
 });
 
-router.put('/:id', function (req, res, next) {
+router.put('/:id', findIssue, function (req, res, next) {
+    issue.name = req.body.name;
+    issue.description = req.body.description;
+    issue.status = req.body.status;
+    issue.location = req.body.location;
+    issue.author = req.body.author;
+    issue.assignedStaff = req.body.assignedStaff;
+    issue.type = req.body.type;
+    issue.tags = req.body.tags;
+    issue.action = req.body.action;
 
-    var issueId = req.params.id;
-
-    Issue.findById(issueId, function (err, issue) {
+    issue.save(function (err, updatedIssue) {
         if (err) {
             res.status(500).send(err);
             return;
-        } else if (!issue) {
-            res.status(404).send('Issue not found');
-            return;
         }
 
-//        issue._id = req.body._id;
-        issue.name = req.body.name;
-        issue.description = req.body.description;
-        issue.status = req.body.status;
-        issue.location = req.body.location;
-        issue.author = req.body.author;
-        issue.assignedStaff = req.body.assignedStaff;
-        issue.type = req.body.type;
-        issue.tags = req.body.tags;
-        issue.action = req.body.action;
-
-        issue.save(function (err, updatedIssue) {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
-
-            res.send(updatedIssue);
-        });
+        res.send(updatedIssue);
     });
 });
 
-router.get('/:id', function (req, res, next) {
-
-    var issueId = req.params.id;
-    Issue.findById(issueId, function (err, issue) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        } else if (!issue) {
-            res.status(404).send('Issue not found');
-            return;
-        }
-        res.send(issue);
-    });
+router.get('/:id', findIssue, function (req, res, next) {
+    res.send(issue);
 });
 
 router.get('/', function (req, res, next) {
@@ -111,66 +86,47 @@ router.get('/', function (req, res, next) {
 
 });
 
-router.post('/:id/comments', toolsFYS.CheckAuthorization, function (req, res, next) {
-  // Only allow Staff to add a tag
-  if (req.userRole == 'staff') {
+router.post('/:id/comments', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
+    issue.actions.push(req.body);
 
-    var issueId = req.params.id;
-    Issue.findById(issueId, function (err, issue) {
+    issue.save(function (err, updatedIssue) {
         if (err) {
             res.status(500).send(err);
             return;
-        } else if (!issue) {
-            res.status(404).send('Issue not found');
+        }
+        res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
+    });
+});
+
+
+
+router.post('/:id/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
+    issue.actions.push(req.body);
+
+    issue.save(function (err, updatedIssue) {
+        if (err) {
+            res.status(500).send(err);
             return;
         }
-
-        issue.actions.push(req.body);
-
-        issue.save(function (err, updatedIssue) {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
-            console.log(updatedIssue);
-            res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
-        });
+        res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
     });
-  } else {
-      res.status(401).send('User not authorized');
-      return;
-  }
 });
 
+/**
+ * Middleware that finds the issue corresponding to the :id URL parameter
+ * and stores it in `req.issue`.
+ */
+function findIssue(req, res, next) {
+  Issue.findById(req.params.id, function (err, issue) {
+      if (err) {
+          res.status(500).send(err);
+          return;
+      } else if (!issue) {
+          res.status(404).send('Issue not found');
+          return;
+      }
+      req.issue = issue;
 
-
-router.post('/:id/statuschanges', toolsFYS.CheckAuthorization, function (req, res, next) {
-    // Only allow Staff to add a tag
-    if (req.userRole == 'staff') {
-
-      var issueId = req.params.id;
-      Issue.findById(issueId, function (err, issue) {
-          if (err) {
-              res.status(500).send(err);
-              return;
-          } else if (!issue) {
-              res.status(404).send('Issue not found');
-              return;
-          }
-
-          issue.actions.push(req.body);
-
-          issue.save(function (err, updatedIssue) {
-              if (err) {
-                  res.status(500).send(err);
-                  return;
-              }
-              console.log(updatedIssue);
-              res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
-          });
-      });
-    } else {
-        res.status(401).send('User not authorized');
-        return;
-    }
-});
+      next();
+  });
+}
