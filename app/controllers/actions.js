@@ -1,4 +1,4 @@
-var express = require('express'),
+/*var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         Issue = mongoose.model('Issue'),
@@ -21,9 +21,9 @@ router.post('/statusChange/:id', toolsFYS.CheckAuthorization, function (req, res
             res.status(404).send('Issue not found');
             return;
         }
-        
+
         issue.status = req.body.status;
-        
+
         issue.save(function (err, updatedIssue) {
             if (err) {
                 res.status(500).send(err);
@@ -173,3 +173,4 @@ router.get('/', function (req, res, next) {
 //        res.send(user);
 //    });
 //});
+*/
