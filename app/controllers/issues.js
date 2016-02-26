@@ -53,16 +53,16 @@ router.put('/:id', function (req, res, next) {
             return;
         }
 
-        issue._id = req.body._id;
+//        issue._id = req.body._id;
         issue.name = req.body.name;
-        issue.description = req.body.description;
-        issue.status = req.body.status;
-        issue.location = req.body.location;
-        issue.author = req.body.author;
-        issue.assignedStaff = req.body.assignedStaff;
-        issue.type = req.body.type;
-        issue.tags = req.body.tags;
-        issue.action = req.body.action;
+//        issue.description = req.body.description;
+//        issue.status = req.body.status;
+//        issue.location = req.body.location;
+//        issue.author = req.body.author;
+//        issue.assignedStaff = req.body.assignedStaff;
+//        issue.type = req.body.type;
+//        issue.tags = req.body.tags;
+//        issue.action = req.body.action;
 
         issue.save(function (err, updatedIssue) {
             if (err) {
