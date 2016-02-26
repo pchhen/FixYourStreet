@@ -1,4 +1,4 @@
-/*var express = require('express'),
+var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         Issue = mongoose.model('Issue'),
@@ -173,4 +173,3 @@ router.get('/', function (req, res, next) {
 //        res.send(user);
 //    });
 //});
-*/
