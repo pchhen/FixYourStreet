@@ -116,6 +116,8 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
       var offset = (page - 1) * pageSize,
           limit = pageSize;
 
+      var issueOrder = -1;
+
       var criteriaUser = {};
       var criteriaIssue = {};
 
@@ -129,23 +131,19 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
         // Complex filter by issue status with boolean operator
         if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
 
-        }
+        }// Filter by status
         else if (req.query.issueStatusIs){
-            //criteriaIssue.status = req.query.issueStatusIs;
            criteriaIssue.status = req.query.issueStatusIs;
-            //criteriaIssue.nin = req.query.issueStatusIs;
-
-          GroupUsersByIssues();
-
-
-        }
+        }// Filter by status is not simple
         else if (req.query.issueStatusIsNot){
-
+          criteriaIssue.status = {$nin: [req.query.issueStatusIsNot]};
         }
       }
 
+      if(req.query.order == 'leastFirst'){
+        issueOrder = 1;
+      }
 
-      GroupUsersByIssues  = function (callback){
 
         Issue.aggregate([
           {
@@ -158,7 +156,7 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
             }
           },
           {
-            $sort: { total: -1 }
+            $sort: { total: issueOrder }
           },
           {
             $skip: offset
@@ -166,15 +164,16 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
           {
             $limit: limit
           }
-        ], function(err, userCounts) {
+        ], function(err, usersCounts) {
           if (err) {
             res.status(500).send(err);
             return;
           }
-          console.log(userCounts);
+          console.log(usersCounts);
+          //callback(undefined, usersCounts);
+
 
         });
-      };
 
 
       // Count all users (without filters).
@@ -202,12 +201,14 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
       // Find books matching the filters.
       findMatchingUsers = function (callback) {
 
-        var query = User
+        var query = Issue
           .find(criteriaUser)
           // Do not forget to sort, as pagination makes more sense with sorting.
           .sort('_id')
           .skip(offset)
           .limit(limit);
+
+          query = query.populate('author');
 
 
         // Execute the query.
@@ -250,3 +251,33 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
       return;
   }
 });
+/*
+function GroupUsersByIssues (criteria, order, offset, limit, callback){
+  Issue.aggregate([
+    {
+      $match: criteria
+    },
+    {
+      $group: {
+        _id: '$author',
+        total: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { total: order }
+    },
+    {
+      $skip: offset
+    },
+    {
+      $limit: limit
+    }
+  ], function(err, usersCounts) {
+    if (err) {
+      res.status(500).send(err);
+      return;
+    }
+    callback(undefined, usersCounts);
+
+  });
+}*/
