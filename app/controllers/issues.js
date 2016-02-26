@@ -8,6 +8,22 @@ module.exports = function (app) {
     app.use('/api/v1/issues', router);
 };
 
+/*
+params:
+issues ->
+  user
+  type
+  bbox
+  statusIs
+  statusIsNot
+  since
+  until
+issues/:id/actions ->
+  type
+  content
+
+*/
+
 router.post('/', function (req, res, next) {
 
     var issue = new Issue(req.body);
