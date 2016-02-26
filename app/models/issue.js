@@ -5,6 +5,7 @@ var ActionTypes = 'statutChange comment'.split(' ');
 var ActionSchema = new Schema({
   type: { type: String, required: true, enum: ActionTypes },
   content: { type: String, required: true },
+  author: {type: Schema.Types.String, ref: 'User'}
 });
 
 ActionSchema.virtual('date')

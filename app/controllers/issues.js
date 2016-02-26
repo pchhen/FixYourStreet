@@ -13,7 +13,9 @@ params:
 issues ->
   user
   type
-  bbox
+  region
+distance
+limit
   statusIs
   statusIsNot
   since
@@ -60,6 +62,7 @@ router.put('/:id', function (req, res, next) {
         issue.assignedStaff = req.body.assignedStaff;
         issue.type = req.body.type;
         issue.tags = req.body.tags;
+        issue.action = req.body.action;
 
         issue.save(function (err, updatedIssue) {
             if (err) {
