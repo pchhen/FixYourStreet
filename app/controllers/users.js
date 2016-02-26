@@ -116,172 +116,137 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
       var offset = (page - 1) * pageSize,
           limit = pageSize;
 
-      var criteria = {};
+      var criteriaUser = {};
+      var criteriaIssue = {};
 
-        // Filter by role
-        if (req.query.role) {
-            criteria.role = req.query.role;
+      // Filter by role
+      if (req.query.role) {
+          criteriaUser.role = req.query.role;
+      }
+
+      // Filter by status issues (aggregation with issue)
+      if(req.query.issueStatusIs || req.query.issueStatusIsNot){
+        // Complex filter by issue status with boolean operator
+        if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
+
         }
+        else if (req.query.issueStatusIs){
+            //criteriaIssue.status = req.query.issueStatusIs;
+           criteriaIssue.status = req.query.issueStatusIs;
+            //criteriaIssue.nin = req.query.issueStatusIs;
 
-        // Filter by status issues (aggregation with issue)
-        if(req.query.issueStatusIs || req.query.issueStatusIsNot){
-          // Complex filter by issue status with boolean operator
-          if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
-
-          }
-          else if (req.query.issueStatusIs){
-            statuss = req.query.issueStatusIs;
-            console.log(req.query.issueStatusIs);
+          GroupUsersByIssues();
 
 
-
-
-            Issue.aggregate([
-              {
-                $match: {
-                  status: "created" }
-              },
-              {
-                $group: {
-                  _id: '$author',
-                  total: { $sum: 1 }
-                }
-              },
-              {
-                $sort: { total: -1 }
-              },
-              {
-                $skip: offset
-              },
-              {
-                $limit: limit
-              }
-            ], function(err, userCounts) {
-              if (err) {
-                res.status(500).send(err);
-                return;
-              }
-              console.log(userCounts);
-
-            });
-
-          }
-          else if (req.query.issueStatusIsNot){
-
-          }
         }
+        else if (req.query.issueStatusIsNot){
+
+        }
+      }
 
 
+      GroupUsersByIssues  = function (callback){
 
-
-
-
-
-
-        // Count all users (without filters).
-        countAllUsers = function (callback) {
-          User.count(function(err, totalCount) {
-            if (err) {
-              callback(err);
-            } else {
-              callback(undefined, totalCount);
+        Issue.aggregate([
+          {
+            $match: criteriaIssue
+          },
+          {
+            $group: {
+              _id: '$author',
+              total: { $sum: 1 }
             }
-          });
-        };
-
-        // Count books matching the filters.
-        countFilteredUsers = function (callback) {
-          User.count(criteria, function(err, filteredCount) {
-            if (err) {
-              callback(err);
-            } else {
-              callback(undefined, filteredCount);
-            }
-          });
-        };
-
-        // Find books matching the filters.
-        findMatchingUsers = function (callback) {
-
-          var query = User
-            .find(criteria)
-            // Do not forget to sort, as pagination makes more sense with sorting.
-            .sort('_id')
-            .skip(offset)
-            .limit(limit);
-
-
-          // Execute the query.
-          query.exec(function(err, users) {
-            if (err) {
-              callback(err);
-            } else {
-              callback(undefined, users);
-            }
-          });
-        };
-
-        // Set the pagination headers and send the matching books in the body.
-        sendResponse = function (err, results) {
+          },
+          {
+            $sort: { total: -1 }
+          },
+          {
+            $skip: offset
+          },
+          {
+            $limit: limit
+          }
+        ], function(err, userCounts) {
           if (err) {
             res.status(500).send(err);
             return;
           }
+          console.log(userCounts);
 
-          var totalCount = results[0],
-              filteredCount = results[1],
-              users = results[2];
+        });
+      };
 
-          // Return the pagination data in headers.
-          res.set('X-Pagination-Page', page);
-          res.set('X-Pagination-Page-Size', pageSize);
-          res.set('X-Pagination-Total', totalCount);
-          res.set('X-Pagination-Filtered-Total', filteredCount);
 
-          res.send(users);
-        };
+      // Count all users (without filters).
+      countAllUsers = function (callback) {
+        User.count(function(err, totalCount) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(undefined, totalCount);
+          }
+        });
+      };
 
-      async.parallel([
-        countAllUsers,
-        countFilteredUsers,
-        findMatchingUsers
-      ], sendResponse);
-    } else {
-        res.status(401).send('User not authorized');
-        return;
-    }
-});
+      // Count books matching the filters.
+      countFilteredUsers = function (callback) {
+        User.count(criteriaUser, function(err, filteredCount) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(undefined, filteredCount);
+          }
+        });
+      };
 
-function GroupUsersByIssues (req, res, next){
+      // Find books matching the filters.
+      findMatchingUsers = function (callback) {
 
-  Issue.aggregate([
-    {
-      $match: {
-        status: { $in: status }
-      }
-    },
-    {
-      $group: {
-        _id: '$author',
-        total: { $sum: 1 }
-      }
-    },
-    {
-      $sort: { total: -1 }
-    },
-    {
-      $skip: offset
-    },
-    {
-      $limit: limit
-    }
-  ], function(err, userCounts) {
-    if (err) {
-      res.status(500).send(err);
+        var query = User
+          .find(criteriaUser)
+          // Do not forget to sort, as pagination makes more sense with sorting.
+          .sort('_id')
+          .skip(offset)
+          .limit(limit);
+
+
+        // Execute the query.
+        query.exec(function(err, users) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(undefined, users);
+          }
+        });
+      };
+
+      // Set the pagination headers and send the matching books in the body.
+      sendResponse = function (err, results) {
+        if (err) {
+          res.status(500).send(err);
+          return;
+        }
+
+        var totalCount = results[0],
+            filteredCount = results[1],
+            users = results[2];
+
+        // Return the pagination data in headers.
+        res.set('X-Pagination-Page', page);
+        res.set('X-Pagination-Page-Size', pageSize);
+        res.set('X-Pagination-Total', totalCount);
+        res.set('X-Pagination-Filtered-Total', filteredCount);
+
+        res.send(users);
+      };
+
+    async.parallel([
+      countAllUsers,
+      countFilteredUsers,
+      findMatchingUsers
+    ], sendResponse);
+  } else {
+      res.status(401).send('User not authorized');
       return;
-    }
-    console.log(userCounts);
-    callback(undefined, userCounts);
-
-  });
-}
+  }
+});
