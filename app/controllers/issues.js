@@ -101,7 +101,7 @@ router.get('/', function (req, res, next) {
         criteria.type = req.query.type;
     }
 
-    Issue.find(criteria).populate('author').exec(function (err, issues) {
+    Issue.find(criteria).populate('action').exec(function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -109,4 +109,68 @@ router.get('/', function (req, res, next) {
         res.send(issues);
     });
 
+});
+
+router.post('/:id/comments', toolsFYS.CheckAuthorization, function (req, res, next) {
+  // Only allow Staff to add a tag
+  if (req.userRole == 'staff') {
+
+    var issueId = req.params.id;
+    Issue.findById(issueId, function (err, issue) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        } else if (!issue) {
+            res.status(404).send('Issue not found');
+            return;
+        }
+
+        issue.actions.push(req.body);
+
+        issue.save(function (err, updatedIssue) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            console.log(updatedIssue);
+            res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
+        });
+    });
+  } else {
+      res.status(401).send('User not authorized');
+      return;
+  }
+});
+
+
+
+router.post('/:id/statuschanges', toolsFYS.CheckAuthorization, function (req, res, next) {
+    // Only allow Staff to add a tag
+    if (req.userRole == 'staff') {
+
+      var issueId = req.params.id;
+      Issue.findById(issueId, function (err, issue) {
+          if (err) {
+              res.status(500).send(err);
+              return;
+          } else if (!issue) {
+              res.status(404).send('Issue not found');
+              return;
+          }
+
+          issue.actions.push(req.body);
+
+          issue.save(function (err, updatedIssue) {
+              if (err) {
+                  res.status(500).send(err);
+                  return;
+              }
+              console.log(updatedIssue);
+              res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
+          });
+      });
+    } else {
+        res.status(401).send('User not authorized');
+        return;
+    }
 });

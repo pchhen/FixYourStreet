@@ -4,7 +4,6 @@ var async = require('async'),
         mongoose = require('mongoose'),
         User = mongoose.model('User'),
         Issue = mongoose.model('Issue'),
-        Action = mongoose.model('Action'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
@@ -202,7 +201,7 @@ router.get('/', toolsFYS.CheckAuthorization, function (req, res, next) {
       // Find books matching the filters.
       findMatchingUsers = function (callback) {
 
-        var query = Action
+        var query = User
           .find(criteriaUser)
           // Do not forget to sort, as pagination makes more sense with sorting.
           .sort('_id')
