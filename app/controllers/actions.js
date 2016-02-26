@@ -1,30 +1,46 @@
 var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
-        User = mongoose.model('User'),
+        issue = mongoose.model('Issue'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
-    app.use('/api/v1/users', router);
+    app.use('/api/v1/actions', router);
 };
 
 router.post('/', toolsFYS.CheckAuthorization, function (req, res, next) {
     // Only allow Staff to add a user
-    if (req.userRole == 'staff') {
-        var user = new User(req.body);
+    var actionType = req.params.type;
 
-        user.save(function (err, createdUser) {
+    if (actionType == "comment") {
+        var action = new Action(req.body);
+        issue.save(function (err, createdIssue) {
             if (err) {
                 res.status(500).send(err);
                 return;
             }
-
-            res.send(createdUser);
+            res.send(createdIssue);
         });
-    } else {
-        res.status(403).send('User not authorized');
-        return;
     }
+
+    if (actionType == "statutChange") {
+        if (req.userRole == 'staff') {
+            var user = new User(req.body);
+
+            user.save(function (err, createdUser) {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+                res.send(createdUser);
+            });
+        } else {
+            res.status(403).send('User not authorized');
+            return;
+        }
+    }
+
+
 });
 
 router.put('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
