@@ -71,7 +71,7 @@ router.get('/:id', function (req, res, next) {
     });
 });
 
-router.get('/api/v1/issues', function (req, res, next) {
+router.get('/', function (req, res, next) {
 
     var issueType = req.query.types;
     Issue.where("type").equals(issueType).exec(function (err, issues) {

@@ -118,7 +118,7 @@ router.get('/:id', toolsFYS.CheckAuthorization, function (req, res, next) {
 });
 
 
-router.get('/api/v1/users', function (req, res, next) {
+router.get('/', function (req, res, next) {
 
     var userRole = req.query.role;
 
