@@ -10,9 +10,35 @@ module.exports = function (app) {
     app.use('/api/v1/users', router);
 };
 
-router.post('/', function (req, res, next) {
+/**
+ * @api {post} /users/citizen Create a new Citizen
+ * @apiVersion 0.0.1
+ * @apiName PostCitizen
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiParam {String} _id Name of the User.
+ * @apiParam {String} password Password of the User.
+ *
+ * @apiSuccess {String} _id Name of the User.
+ * @apiSuccess {String} role Role of the User.
+ * @apiSuccess {String} password Password of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "_id": "jim",
+ *       "role": "citizen",
+ *       "password": "password"
+ *     }
+ */
+
+router.post('/citizen', function (req, res, next) {
 
     var user = new User(req.body);
+    user.role = 'citizen';
+
+    //**Need a hashfunction for the password
 
     user.save(function (err, createdUser) {
         if (err) {
@@ -23,6 +49,74 @@ router.post('/', function (req, res, next) {
         res.send(createdUser);
     });
 });
+
+/**
+ * @api {post} /users/staff Create a new Staff
+ * @apiVersion 0.0.1
+ * @apiName PostStaff
+ * @apiGroup User
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission staff
+ *
+ * @apiParam {String} _id Name of the User.
+ * @apiParam {String} password Password of the User.
+ *
+ * @apiSuccess {String} _id Name of the User.
+ * @apiSuccess {String} role Role of the User.
+ * @apiSuccess {String} password Password of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "_id": "arnold",
+ *       "role": "staff",
+ *       "password": "password"
+ *     }
+ */
+
+router.post('/staff', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
+
+    var user = new User(req.body);
+    user.role = 'staff';
+
+    //**Need a hashfunction for the password
+
+    user.save(function (err, createdUser) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+
+        res.send(createdUser);
+    });
+});
+
+/**
+ * @api {put} /users/:id Update a User
+ * @apiVersion 0.0.1
+ * @apiName PutUser
+ * @apiGroup User
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission staff
+ *
+ * @apiParam {String} _id Name of the User.
+ * @apiParam {String=staff,citizen} [role] Role of the User.
+ * @apiParam {String} [password] Password of the User.
+ *
+ * @apiSuccess {String} _id Name of the User.
+ * @apiSuccess {String} role Role of the User.
+ * @apiSuccess {String} password Password of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "_id": "arnold",
+ *       "role": "staff",
+ *       "password": "password"
+ *     }
+ */
 
 router.put('/:id', toolsFYS.CheckStaffAuthorization, findUser, function (req, res, next) {
     user._id = req.body._id;
@@ -38,6 +132,21 @@ router.put('/:id', toolsFYS.CheckStaffAuthorization, findUser, function (req, re
         res.send(updatedUser);
     });
 });
+
+/**
+ * @api {delete} /users/:id Delete a User
+ * @apiVersion 0.0.1
+ * @apiName DeleteUser
+ * @apiGroup User
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission staff
+ *
+ * @apiParam {String} _id Name of the User.
+ *
+ * @apiSuccessExample {json} Success example
+ * HTTP/1.1 204 No Content
+ */
 
 router.delete('/:id', function (req, res, next) {
     var userId = req.params.id;
@@ -59,9 +168,60 @@ router.delete('/:id', function (req, res, next) {
     });
 });
 
-router.get('/:id', toolsFYS.CheckStaffAuthorization, findUser, function (req, res, next) {
-      res.send(user);
+/**
+ * @api {get} /users/:id Read data of a user
+ * @apiVersion 0.0.1
+ * @apiName GetUser
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiParam {String} _id Name of the Type.
+ *
+ * @apiSuccess {String} _id Name of the User.
+ * @apiSuccess {String} role Role of the User.
+ * @apiSuccess {String} password Password of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "_id": "joe",
+ *       "role": "citizen",
+ *       "password": "password"
+ *     }
+ */
+
+router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, res, next) {
+      res.send(req.user);
 });
+
+/**
+ * @api {get} /users/ List all Users
+ * @apiVersion 0.0.1
+ * @apiName GetUsers
+ * @apiGroup User
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission staff
+ *
+ * @apiParam {String} [issueStatusIs] Filter by Issue status set by a user
+ * @apiParam {String} [issueStatusIsNot] Filter by Issue status not set by a user
+ * @apiParam {String} [page=1] Actual page number
+ * @apiParam {String} [pageSize=30] Numbers of user per page
+ * @apiParam {String=leastFirst,mostFirst} [order="mostFirst"] Ascending or descending order
+
+ *
+ * @apiSuccess {String} _id Name of the User.
+ * @apiSuccess {String} role Role of the User.
+ * @apiSuccess {String} password Password of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "_id": "joe",
+ *       "role": "citizen",
+ *       "password": "password"
+ *     }
+ */
 
 router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
       // Get page and page size for pagination.
@@ -234,16 +394,22 @@ function GroupUsersByIssues (criteria, order, offset, limit, callback){
   });
 }*/
 
+/**
+ * Middleware that finds the user corresponding to the :id URL parameter
+ * and stores it in `req.user`.
+ */
+
 function findUser(req, res, next) {
-  User.findById(req.params.id, function (err, type) {
+  User.findById(req.params.id, function (err, user) {
       if (err) {
           res.status(500).send(err);
           return;
-      } else if (!type) {
+      } else if (!user) {
           res.status(404).send('User not found');
           return;
       }
       req.user = user;
+
 
       next();
   });
