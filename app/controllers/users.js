@@ -208,7 +208,6 @@ router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, 
  * @apiParam {String} [page=1] Actual page number
  * @apiParam {String} [pageSize=30] Numbers of user per page
  * @apiParam {String=leastFirst,mostFirst} [order="mostFirst"] Ascending or descending order
-
  *
  * @apiSuccess {String} _id Name of the User.
  * @apiSuccess {String} role Role of the User.

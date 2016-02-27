@@ -6,4 +6,4 @@ var TypeSchema = new Schema({
   description: { type: String, required: true }
 });
 //rien
-mongoose.model('Type', TypeSchema);
+mongoose.model('IssueType', TypeSchema);

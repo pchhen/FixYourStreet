@@ -1,11 +1,11 @@
 var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
-        Type = mongoose.model('Type'),
+        Type = mongoose.model('IssueType'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
-    app.use('/api/v1/types', router);
+    app.use('/api/v1/issues/types', router);
 };
 
 /**

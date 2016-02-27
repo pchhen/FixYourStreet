@@ -27,7 +27,74 @@ module.exports = function (app) {
 
  */
 
-router.post('/', function (req, res, next) {
+ /**
+  * @api {post} /issues/ Create a new Issue
+  * @apiVersion 0.0.1
+  * @apiName PostIssue
+  * @apiGroup Issue
+  * @apiHeader {String} X-USERID Username.
+  * @apiHeader {String} X-USERHASH Password hashed of the Username.
+  * @apiPermission citizen
+  *
+  * @apiParam {String} name Name of the Issue
+  * @apiParam {String} description Description of the Issue
+  * @apiParam {Array} location Type of geometry and position
+  * @apiParam {String} [location.type=point] Longitude and Latitude
+  * @apiParam {Number[]} location.coordinates Longitude and Latitude
+  * @apiParam {String} author Author of the Issue
+  * @apiParam {String} [assignedStaff] Staff assigned to work on the Issue
+  * @apiParam {String} type Type of the Issue
+  * @apiParam {String[]} tags Keywords describing the Issue
+  * @apiParam {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+  * @apiParam {String=comment,statusChange} actions.type Type of the action
+  * @apiParam {String} actions.content Description for comment action or status for statusChange action
+  * @apiParam {Date} [actions.createdAt=now] Date of the action
+  *
+  * @apiSuccess {String} _id Id of the Issue
+  * @apiSuccess {String} name Name of the Issue
+  * @apiSuccess {String} description Description of the Issue
+  * @apiSuccess {Array} location Type of geometry and position
+  * @apiSuccess {String} location.type=point Longitude and Latitude
+  * @apiSuccess {Number[]} location.coordinates Longitude and Latitude
+  * @apiSuccess {String} author Author of the Issue
+  * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
+  * @apiSuccess {String} type Type of the Issue
+  * @apiSuccess {String[]} tags Keywords describing the Issue
+  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+  * @apiSuccess {String} actions.type Type of the action
+  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
+  * @apiSuccess {Date} actions.createdAt=now Date of the action
+  * @apiSuccess {String} actions._id Id of the Issue
+  *
+  * @apiSuccessExample Success-Response:
+  *     HTTP/1.1 200 OK
+  *     {
+        "name": "Grafiti",
+        "description": "A nice drawin on my window shop ",
+        "status": "created",
+        "author": "joe",
+        "type": "Streetlight",
+        "_id": "56d1c54c77048d1005ea7416",
+        "actions": [
+          {
+            "type": "statutChange",
+            "content": "created",
+            "author": "joe",
+            "createdAt": "2016-02-27T16:42:19.565Z",
+            "_id": "56d1c54c77048d1005ea7417"
+          }
+        ],
+        "tags": [
+          "baba"
+        ],
+        "location": {
+          "coordinates":[10.5,41.9],
+          "type": "point"
+        },
+      }
+  */
+
+router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
 
     var issue = new Issue(req.body);
 
@@ -63,7 +130,7 @@ router.put('/:id', findIssue, function (req, res, next) {
 });
 
 router.get('/:id', findIssue, function (req, res, next) {
-    res.send(issue);
+    res.send(req.issue);
 });
 
 router.get('/', function (req, res, next) {
@@ -87,6 +154,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/:id/comments', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
+    issue = req.issue;
     issue.actions.push(req.body);
 
     issue.save(function (err, updatedIssue) {
@@ -101,6 +169,7 @@ router.post('/:id/comments', toolsFYS.CheckStaffAuthorization, findIssue, functi
 
 
 router.post('/:id/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
+    issue = req.issue;
     issue.actions.push(req.body);
 
     issue.save(function (err, updatedIssue) {
