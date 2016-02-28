@@ -30,7 +30,7 @@ var StatusAvailable = 'created acknowledged assigned in_progress solved rejected
 var IssueSchema = new Schema({
     name: {type: String, required: true},
     description: {type: String, required: true},
-    status: {type: String, required: true, enum: StatusAvailable},
+    status: {type: String, default:"created", enum: StatusAvailable},
     location: {
         type: {type: String, default: "Point"},
         coordinates: {type: [Number], required: true}// Order: longitude, latitude

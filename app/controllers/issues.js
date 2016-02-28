@@ -9,29 +9,11 @@ module.exports = function (app) {
     app.use('/api/v1/issues', router);
 };
 
-/*
- params:
- issues ->
- user
- type
- region
- distance
- limit
- statusIs
- statusIsNot
- since
- until
- issues/:id/actions ->
- type
- content
-
- */
-
  /**
   * @api {post} /issues/ Create a new Issue
   * @apiVersion 0.0.1
   * @apiName PostIssue
-  * @apiGroup Issue
+  * @apiGroup Issues
   * @apiHeader {String} X-USERID Username.
   * @apiHeader {String} X-USERHASH Password hashed of the Username.
   * @apiPermission citizen
@@ -39,7 +21,7 @@ module.exports = function (app) {
   * @apiParam {String} name Name of the Issue
   * @apiParam {String} description Description of the Issue
   * @apiParam {Array} location Type of geometry and position
-  * @apiParam {String} [location.type=point] Longitude and Latitude
+  * @apiParam {String=Point,LineString,Polygon,MultiPoint,MultilineString,MultiPolygon} [location.type=point] Type of GeoJSON objects
   * @apiParam {Number[]} location.coordinates Longitude and Latitude
   * @apiParam {String} author Author of the Issue
   * @apiParam {String} [assignedStaff] Staff assigned to work on the Issue
@@ -53,8 +35,9 @@ module.exports = function (app) {
   * @apiSuccess {String} _id Id of the Issue
   * @apiSuccess {String} name Name of the Issue
   * @apiSuccess {String} description Description of the Issue
+  * @apiSuccess {String=created,acknowledged,assigned,in_progress,solved,rejected} status Status of the Issue
   * @apiSuccess {Array} location Type of geometry and position
-  * @apiSuccess {String} location.type=point Longitude and Latitude
+  * @apiSuccess {String=Point,LineString,Polygon,MultiPoint,MultilineString,MultiPolygon} location.type=point Type of GeoJSON objects
   * @apiSuccess {Number[]} location.coordinates Longitude and Latitude
   * @apiSuccess {String} author Author of the Issue
   * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
@@ -92,32 +75,103 @@ module.exports = function (app) {
           "type": "point"
         },
       }
+  *@apiError BadRequest Wrong author or statutChange - Author of the issue should be the same author as the first statutChange action which should also be "created"
   */
 
 router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
 
-    var issue = new Issue(req.body);
+    //Check: Author of the issue should be the same author as the first statutChange action which should also be "created"
+    if((req.body.author == req.body.actions[0].author) && (req.body.actions[0].content == 'created')){
+      var issue = new Issue(req.body);
 
-    issue.save(function (err, createdIssue) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
+      issue.save(function (err, createdIssue) {
+          if (err) {
+              res.status(500).send(err);
+              return;
+          }
 
-        res.send(createdIssue);
-    });
+          res.send(createdIssue);
+      });
+    }else{
+      res.status(400).send('Wrong authors or statutChange');
+      return;
+    }
 });
 
+/**
+ * @api {put} /issues/:id Update an Issue
+ * @apiVersion 0.0.1
+ * @apiName PutIssue
+ * @apiGroup Issues
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission staff
+ *
+ * @apiParam {String} [name] Name of the Issue
+ * @apiParam {String} [description] Description of the Issue
+ * @apiParam {Array} [location] Type of geometry and position
+ * @apiParam {String=Point,LineString,Polygon,MultiPoint,MultilineString,MultiPolygon} [location.type=point] Type of GeoJSON objects
+ * @apiParam {Number[]} [location.coordinates] Longitude and Latitude
+ * @apiParam {String} [author] Author of the Issue
+ * @apiParam {String} [assignedStaff] Staff assigned to work on the Issue
+ * @apiParam {String} [type] Type of the Issue
+ * @apiParam {String[]} [tags] Keywords describing the Issue
+ *
+ * @apiSuccess {String} _id Id of the Issue
+ * @apiSuccess {String} name Name of the Issue
+ * @apiSuccess {String} description Description of the Issue
+ * @apiSuccess {String=created,acknowledged,assigned,in_progress,solved,rejected} status Status of the Issue
+ * @apiSuccess {Array} location Type of geometry and position
+ * @apiSuccess {String=Point,LineString,Polygon,MultiPoint,MultilineString,MultiPolygon} location.type=point Type of GeoJSON objects
+ * @apiSuccess {Number[]} location.coordinates Longitude and Latitude
+ * @apiSuccess {String} author Author of the Issue
+ * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
+ * @apiSuccess {String} type Type of the Issue
+ * @apiSuccess {String[]} tags Keywords describing the Issue
+ * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+ * @apiSuccess {String} actions.type Type of the action
+ * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
+ * @apiSuccess {Date} actions.createdAt=now Date of the action
+ * @apiSuccess {String} actions._id Id of the Issue
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+       "name": "Grafiti",
+       "description": "A nice drawin on my window shop ",
+       "status": "created",
+       "author": "joe",
+       "type": "Streetlight",
+       "_id": "56d1c54c77048d1005ea7416",
+       "actions": [
+         {
+           "type": "statutChange",
+           "content": "created",
+           "author": "joe",
+           "createdAt": "2016-02-27T16:42:19.565Z",
+           "_id": "56d1c54c77048d1005ea7417"
+         }
+       ],
+       "tags": [
+         "baba"
+       ],
+       "location": {
+         "coordinates":[10.5,41.9],
+         "type": "point"
+       },
+     }
+  */
+
 router.put('/:id', findIssue, function (req, res, next) {
+    issue = req.issue;
+
     issue.name = req.body.name;
     issue.description = req.body.description;
-    issue.status = req.body.status;
-    issue.location = req.body.location;
+    issue.location[0] = req.body.location[0];
     issue.author = req.body.author;
     issue.assignedStaff = req.body.assignedStaff;
     issue.type = req.body.type;
     issue.tags = req.body.tags;
-    issue.action = req.body.action;
 
     issue.save(function (err, updatedIssue) {
         if (err) {
@@ -129,21 +183,202 @@ router.put('/:id', findIssue, function (req, res, next) {
     });
 });
 
+/**
+ * @api {get} /issues/:id Read data of an Issue
+ * @apiVersion 0.0.1
+ * @apiName GetIssue
+ * @apiGroup Issues
+ * @apiPermission none
+ *
+ * @apiParam {String} _id Id of the Issue
+ *
+ * @apiSuccess {String} _id Id of the Issue
+ * @apiSuccess {String} name Name of the Issue
+ * @apiSuccess {String} description Description of the Issue
+ * @apiSuccess {String=created,acknowledged,assigned,in_progress,solved,rejected} status Status of the Issue
+ * @apiSuccess {Array} location Type of geometry and position
+ * @apiSuccess {String=Point,LineString,Polygon,MultiPoint,MultilineString,MultiPolygon} location.type=point Type of GeoJSON objects
+ * @apiSuccess {Number[]} location.coordinates Longitude and Latitude
+ * @apiSuccess {String} author Author of the Issue
+ * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
+ * @apiSuccess {String} type Type of the Issue
+ * @apiSuccess {String[]} tags Keywords describing the Issue
+ * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+ * @apiSuccess {String} actions.type Type of the action
+ * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
+ * @apiSuccess {Date} actions.createdAt=now Date of the action
+ * @apiSuccess {String} actions._id Id of the Issue
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+       "name": "Grafiti",
+       "description": "A nice drawin on my window shop ",
+       "status": "created",
+       "author": "joe",
+       "type": "Streetlight",
+       "_id": "56d1c54c77048d1005ea7416",
+       "actions": [
+         {
+           "type": "statutChange",
+           "content": "created",
+           "author": "joe",
+           "createdAt": "2016-02-27T16:42:19.565Z",
+           "_id": "56d1c54c77048d1005ea7417"
+         }
+       ],
+       "tags": [
+         "baba"
+       ],
+       "location": {
+         "coordinates":[10.5,41.9],
+         "type": "point"
+       },
+     }
+  */
+
 router.get('/:id', findIssue, function (req, res, next) {
     res.send(req.issue);
 });
 
+/**
+ * @api {get} /issues/ List and filter all Issues
+ * @apiVersion 0.0.1
+ * @apiName GetIssues
+ * @apiGroup Issues
+ * @apiPermission none
+ *
+ * @apiParam {String} [name] Filter by name of Issues
+ * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIs] Filter by indicated status of Issues
+ * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIsNot] Filter by status of Issues (inverted)
+ * @apiParam {Date} [since] Filter by date of creation
+ * @apiParam {Date} [until] Filter by date of creation
+ * @apiParam {Number[]} [near] Filter by a region indicate by a point with coordinates
+ * @apiParam {Number} [distance] Combinate with near and indicate the maximal distance of the region (from the indicated center)
+ * @apiParam {String} [author] Filter by author of Issues
+ * @apiParam {String} [assignedStaff] Filter by assignedStaff of Issues
+ * @apiParam {String} [type] Filter by type of Issues
+ *
+ * @apiSuccess {String} _id Id of the Issue
+ * @apiSuccess {String} name Name of the Issue
+ * @apiSuccess {String} description Description of the Issue
+ * @apiSuccess {String=created,acknowledged,assigned,in_progress,solved,rejected} status Status of the Issue
+ * @apiSuccess {Array} location Type of geometry and position
+ * @apiSuccess {String=Point,LineString,Polygon,MultiPoint,MultilineString,MultiPolygon} location.type=point Type of GeoJSON objects
+ * @apiSuccess {Number[]} location.coordinates Longitude and Latitude
+ * @apiSuccess {String} author Author of the Issue
+ * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
+ * @apiSuccess {String} type Type of the Issue
+ * @apiSuccess {String[]} tags Keywords describing the Issue
+ * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+ * @apiSuccess {String} actions.type Type of the action
+ * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
+ * @apiSuccess {Date} actions.createdAt=now Date of the action
+ * @apiSuccess {String} actions._id Id of the Issue
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+       "name": "Grafiti",
+       "description": "A nice drawin on my window shop ",
+       "status": "created",
+       "author": "joe",
+       "type": "Streetlight",
+       "_id": "56d1c54c77048d1005ea7416",
+       "actions": [
+         {
+           "type": "statutChange",
+           "content": "created",
+           "author": "joe",
+           "createdAt": "2016-02-27T16:42:19.565Z",
+           "_id": "56d1c54c77048d1005ea7417"
+         }
+       ],
+       "tags": [
+         "baba"
+       ],
+       "location": {
+         "coordinates":[10.5,41.9],
+         "type": "point"
+       },
+     }
+  */
+
 router.get('/', function (req, res, next) {
 
     var criteria = {};
+    var sortcritera = 'name';
+
+    //filter by name (in case of a duplicate name which is authorised by the model)
+    if (req.query.name) {
+        criteria.name = req.query.name;
+    }
+    //filter by statusIs
+    if(req.query.statusIs){
+      var statusIs = req.query.statusIs.split(',');
+      criteria.status = {$in: statusIs };
+    }
+    //filter by statusIsNot
+    if(req.query.statusIsNot){
+      var statusIsNot = req.query.statusIsNot.split(',');
+      criteria.status = {$nin: statusIsNot };
+    }
+    //filter by since and until date
+    if(req.query.since && req.query.until){
+      //A FAIRE !!!
+       criteria.actions.createdAt = {
+        $gte : new Date(req.query.since),
+        $lte : new Date(req.query.until)
+      };
+    }else if(req.query.since){
+      //A FAIRE !!!
+       criteria.actions.createdAt = {
+        $gte : new Date(req.query.since)
+      };
+    }else if(req.query.until){
+      //A FAIRE !!!
+       criteria.actions.createdAt = {
+        $lte : new Date(req.query.until)
+      };
+    }
+    //filter by near and distance
+    if (typeof(req.query.near) == "object" && req.query.near.length) {
+        //A TESTER + commenter distance en m, km ??? !!!
+        var coordinates = req.query.near.split(',');
+        var distance = 10;
+
+        if (req.query.distance) {
+          //parseInt param: String and Base 10
+          distance = parseInt(req.query.distance, 10);
+        }
+        criteria.location = {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [
+                parseFloat(coordinates[0]),
+                parseFloat(coordinates[1])
+              ]
+            },
+            //mètres, km ???
+            $maxDistance: distance
+          }
+        };
+    }
+    //filter by author
     if (req.query.author) {
         criteria.author = req.query.author;
     }
-    if (req.query.types) {
+    //filter by assignedStaff
+    if (req.query.assignedStaff) {
+        criteria.assignedStaff = req.query.assignedStaff;
+    }
+    //filter by type
+    if (req.query.type) {
         criteria.type = req.query.type;
     }
 
-    Issue.find(criteria).populate('action').exec(function (err, issues) {
+    Issue.find(criteria).sort(sortcritera).populate('action').exec(function (err, issues) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -166,11 +401,11 @@ router.post('/:id/comments', toolsFYS.CheckStaffAuthorization, findIssue, functi
     });
 });
 
-
-
 router.post('/:id/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
     issue = req.issue;
     issue.actions.push(req.body);
+
+    //A FAIRE function de changement status dans issue
 
     issue.save(function (err, updatedIssue) {
         if (err) {

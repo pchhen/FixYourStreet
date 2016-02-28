@@ -14,7 +14,7 @@ module.exports = function (app) {
  * @api {post} /users/citizen Create a new Citizen
  * @apiVersion 0.0.1
  * @apiName PostCitizen
- * @apiGroup User
+ * @apiGroup Users
  * @apiPermission none
  *
  * @apiParam {String} _id Name of the User.
@@ -54,7 +54,7 @@ router.post('/citizen', function (req, res, next) {
  * @api {post} /users/staff Create a new Staff
  * @apiVersion 0.0.1
  * @apiName PostStaff
- * @apiGroup User
+ * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
@@ -96,7 +96,7 @@ router.post('/staff', toolsFYS.CheckStaffAuthorization, function (req, res, next
  * @api {put} /users/:id Update a User
  * @apiVersion 0.0.1
  * @apiName PutUser
- * @apiGroup User
+ * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
@@ -137,7 +137,7 @@ router.put('/:id', toolsFYS.CheckStaffAuthorization, findUser, function (req, re
  * @api {delete} /users/:id Delete a User
  * @apiVersion 0.0.1
  * @apiName DeleteUser
- * @apiGroup User
+ * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
@@ -172,7 +172,7 @@ router.delete('/:id', function (req, res, next) {
  * @api {get} /users/:id Read data of a user
  * @apiVersion 0.0.1
  * @apiName GetUser
- * @apiGroup User
+ * @apiGroup Users
  * @apiPermission none
  *
  * @apiParam {String} _id Name of the Type.
@@ -198,7 +198,7 @@ router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, 
  * @api {get} /users/ List all Users
  * @apiVersion 0.0.1
  * @apiName GetUsers
- * @apiGroup User
+ * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
@@ -240,19 +240,15 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
       if (req.query.role) {
           criteriaUser.role = req.query.role;
       }
-
-      // Filter by status issues (aggregation with issue)
-      if(req.query.issueStatusIs || req.query.issueStatusIsNot){
-        // Complex filter by issue status with boolean operator
-        if ((typeof(req.query.issueStatusIs) == "object" && req.query.issueStatusIs.length) || (typeof(req.query.issueStatusIsNot) == "object" && req.query.issueStatusIsNot.length)) {
-
-        }// Filter by status
-        else if (req.query.issueStatusIs){
-           criteriaIssue.status = req.query.issueStatusIs;
-        }// Filter by status is not simple
-        else if (req.query.issueStatusIsNot){
-          criteriaIssue.status = {$nin: [req.query.issueStatusIsNot]};
-        }
+      //filter by statusIs
+      if(req.query.issueStatusIs){
+        var IssueStatusIs = req.query.issueStatusIs.split(',');
+        criteriaIssue.status = {$in: IssueStatusIs };
+      }
+      //filter by statusIsNot
+      if(req.query.issueStatusIsNot){
+        var IssueStatusIsNot = req.query.issueStatusIsNot.split(',');
+        criteriaIssue.status = {$nin: IssueStatusIsNot };
       }
 
       if(req.query.order == 'leastFirst'){

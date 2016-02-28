@@ -5,14 +5,14 @@ var express = require('express'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
-    app.use('/api/v1/issues/types', router);
+    app.use('/api/v1/issuesTypes', router);
 };
 
 /**
- * @api {post} /types Create a new type
+ * @api {post} /issuesTypes Create a new type
  * @apiVersion 0.0.1
  * @apiName PostType
- * @apiGroup Type
+ * @apiGroup Issues Types
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
@@ -45,10 +45,10 @@ router.post('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
 });
 
 /**
- * @api {put} /types/:id Update a type
+ * @api {put} /issuesTypes/:id Update a type
  * @apiVersion 0.0.1
  * @apiName PutType
- * @apiGroup Type
+ * @apiGroup Issues Types
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
@@ -82,10 +82,10 @@ router.put('/:id', toolsFYS.CheckStaffAuthorization, findType, function (req, re
 });
 
 /**
- * @api {delete} /types/:id Delete a type
+ * @api {delete} /issuesTypes/:id Delete a type
  * @apiVersion 0.0.1
  * @apiName DeleteType
- * @apiGroup Type
+ * @apiGroup Issues Types
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
@@ -113,10 +113,10 @@ router.delete('/:id', toolsFYS.CheckStaffAuthorization, function (req, res, next
 });
 
 /**
- * @api {get} /types/ List all types
+ * @api {get} /issuesTypes/ List all types
  * @apiVersion 0.0.1
  * @apiName GetTypes
- * @apiGroup Type
+ * @apiGroup Issues Types
  * @apiPermission none
  *
  * @apiSuccess {String} _id Name of the Type.
@@ -145,10 +145,10 @@ router.get('/', function (req, res, next) {
 });
 
 /**
- * @api {get} /types/:id Read data of a type
+ * @api {get} /issuesTypes/:id Read data of a type
  * @apiVersion 0.0.1
  * @apiName GetType
- * @apiGroup Type
+ * @apiGroup Issues Types
  * @apiPermission none
  *
  * @apiParam {String} _id Name of the Type.
