@@ -27,18 +27,47 @@ grunt
 ```http
 GET  /api/v1/users?role=staff HTTP/1.1
 ```
-
 ### Get the list of issues raised by a particular user
+```http
+GET  /api/v1/issues?author=joe HTTP/1.1
+```
 ### Get the list of issues of a certain type
+```http
+GET  /api/v1/issues?type=street HTTP/1.1
+```
 ### Get the list of issues in a particular region
+```http
+GET  /api/v1/issues?near=6.5,46.58&distance=10 HTTP/1.1
+```
 ### Get the list of issues solved between two dates
+```http
+GET  /api/v1/issues?statusIs=solved&since=:since&until=:until HTTP/1.1
+```
 ### Get the list of issues created between two dates that are still unresolved.
-
+```http
+GET  /api/v1/issues?statusIsNot=solved&since=:since&until=:until HTTP/1.1
+```
 ### Get the history of an issue (list of actions taken on the issue).
+```http
+GET  /api/v1/issues/:id/actions HTTP/1.1
+```
 ### Get the comments history of an issue
+```http
+GET  /api/v1/issues/:id/actions HTTP/1.1
+```
 ### Get the statusChanges history of an issue
-
+```http
+GET  /api/v1/issues/:id/actions?type=statusChange HTTP/1.1
+```
 ### Get the list of users who have created most issues.
-
+```http
+GET  /api/v1/users?issueStatusIs=created&order=mostFirst&limit=10 HTTP/1.
+```
 ### Get the list of users who have solved most issues.
+```http
+GET  /api/v1/users?issueStatusIs=solved&limit=10 HTTP/1.1
+```
 ### Get the list of users who have the least assigned issues not yet solved or rejected.
+```http
+GET   /api/v1/users?issueStatusIsNot=(solved|rejected)&order=leastFirst&limit=10 HTTP/1.1
+```
