@@ -23,9 +23,22 @@ grunt
 ```
 ## Example of queries
 ### Get the list of staff
+
+```http
+GET  /api/v1/users?role=staff HTTP/1.1
+```
+
 ### Get the list of issues raised by a particular user
 ### Get the list of issues of a certain type
 ### Get the list of issues in a particular region
 ### Get the list of issues solved between two dates
+### Get the list of issues created between two dates that are still unresolved.
+
+### Get the history of an issue (list of actions taken on the issue).
+### Get the comments history of an issue
+### Get the statusChanges history of an issue
+
+### Get the list of users who have created most issues.
+
 ### Get the list of users who have solved most issues.
 ### Get the list of users who have the least assigned issues not yet solved or rejected.
