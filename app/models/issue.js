@@ -1,12 +1,32 @@
 var mongoose = require('mongoose'),
         Schema = mongoose.Schema;
 
+var ValidationError = mongoose.Error.ValidationError;
+var ValidatorError  = mongoose.Error.ValidatorError;
+
+
+var StatusAvailable = 'created acknowledged assigned in_progress solved rejected'.split(' ');
 var ActionTypes = 'statutChange comment'.split(' ');
+
 var ActionSchema = new Schema({
   type: { type: String, required: true, enum: ActionTypes },
   content: { type: String, required: true },
   author: {type: Schema.Types.String, ref: 'User'},
   createdAt:{type: Date, default: Date.now},
+});
+
+// Validate the content (just before saving) if the type is statutChange
+ActionSchema.pre('save', function(next) {
+    if(this.type === "statutChange"){
+        if(StatusAvailable.indexOf(this.content) <= -1){
+          // Custom validationError (not really clean, can be improved probably)
+          var error = new ValidationError(this);
+          error.errors.content = new ValidatorError('content');
+          error.errors.content.message = "Content doesn't contain valid statusChange";
+          return next(error);
+        }
+    }
+    next();
 });
 
 // Validate if the author exist
@@ -17,16 +37,15 @@ ActionSchema.path('author').validate(function (value, respond) {
           return;
       }
       if(!result){
-          respond(false, 'There\'s no issue type like this');
+          respond(false, 'There\'s no author like this');
       }else{
-          respond(true,'Ok the type is known');
+          respond(true,'Ok the author is known');
       }
     });
 });
 
 mongoose.model('Action', ActionSchema);
 
-var StatusAvailable = 'created acknowledged assigned in_progress solved rejected'.split(' ');
 var IssueSchema = new Schema({
     name: {type: String, required: true},
     description: {type: String, required: true},
@@ -56,7 +75,7 @@ IssueSchema.path('type').validate(function (value, respond) {
       if(!result){
           respond(false, 'There\'s no issue type like this');
       }else{
-          respond(true,'Ok the type is known');
+          respond(true,'Ok the issue is known');
       }
     });
 });
@@ -69,9 +88,9 @@ IssueSchema.path('author').validate(function (value, respond) {
           return;
       }
       if(!result){
-          respond(false, 'There\'s no issue type like this');
+          respond(false, 'There\'s no author like this');
       }else{
-          respond(true,'Ok the type is known');
+          respond(true,'Ok the author is known');
       }
     });
 });
@@ -84,9 +103,9 @@ IssueSchema.path('assignedStaff').validate(function (value, respond) {
           return;
       }
       if(!result){
-          respond(false, 'There\'s no issue type like this');
+          respond(false, 'There\'s no assigned staff like this');
       }else{
-          respond(true,'Ok the type is known');
+          respond(true,'Ok the assigned staff is known');
       }
     });
 });
