@@ -6,7 +6,7 @@ var ValidatorError  = mongoose.Error.ValidatorError;
 
 
 var StatusAvailable = 'created acknowledged assigned in_progress solved rejected'.split(' ');
-var ActionTypes = 'statutChange comment'.split(' ');
+var ActionTypes = 'statusChange comment'.split(' ');
 
 var ActionSchema = new Schema({
   type: { type: String, required: true, enum: ActionTypes },
@@ -15,9 +15,9 @@ var ActionSchema = new Schema({
   createdAt:{type: Date, default: Date.now},
 });
 
-// Validate the content (just before saving) if the type is statutChange
+// Validate the content (just before saving) if the type is statusChange
 ActionSchema.pre('save', function(next) {
-    if(this.type === "statutChange"){
+    if(this.type === "statusChange"){
         if(StatusAvailable.indexOf(this.content) <= -1){
           // Custom validationError (not really clean, can be improved probably)
           var error = new ValidationError(this);

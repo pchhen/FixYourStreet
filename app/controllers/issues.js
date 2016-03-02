@@ -60,7 +60,7 @@ module.exports = function (app) {
         "_id": "56d1c54c77048d1005ea7416",
         "actions": [
           {
-            "type": "statutChange",
+            "type": "statusChange",
             "content": "created",
             "author": "joe",
             "createdAt": "2016-02-27T16:42:19.565Z",
@@ -75,12 +75,12 @@ module.exports = function (app) {
           "type": "point"
         },
       }
-  *@apiError BadRequest Wrong author or statutChange - Author of the issue should be the same author as the first statutChange action which should also be "created"
+  *@apiError BadRequest Wrong author or statusChange - Author of the issue should be the same author as the first statusChange action which should also be "created"
   */
 
 router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
 
-    //Check: Author of the issue should be the same author as the first statutChange action which should also be "created"
+    //Check: Author of the issue should be the same author as the first statusChange action which should also be "created"
     if((req.body.author == req.body.actions[0].author) && (req.body.actions[0].content == 'created')){
       var issue = new Issue(req.body);
 
@@ -93,7 +93,7 @@ router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
           res.send(createdIssue);
       });
     }else{
-      res.status(400).send('Wrong authors or statutChange');
+      res.status(400).send('Wrong authors or statusChange');
       return;
     }
 });
@@ -145,7 +145,7 @@ router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
        "_id": "56d1c54c77048d1005ea7416",
        "actions": [
          {
-           "type": "statutChange",
+           "type": "statusChange",
            "content": "created",
            "author": "joe",
            "createdAt": "2016-02-27T16:42:19.565Z",
@@ -220,7 +220,7 @@ router.put('/:id', findIssue, function (req, res, next) {
        "_id": "56d1c54c77048d1005ea7416",
        "actions": [
          {
-           "type": "statutChange",
+           "type": "statusChange",
            "content": "created",
            "author": "joe",
            "createdAt": "2016-02-27T16:42:19.565Z",
@@ -287,7 +287,7 @@ router.get('/:id', findIssue, function (req, res, next) {
        "_id": "56d1c54c77048d1005ea7416",
        "actions": [
          {
-           "type": "statutChange",
+           "type": "statusChange",
            "content": "created",
            "author": "joe",
            "createdAt": "2016-02-27T16:42:19.565Z",
@@ -388,24 +388,96 @@ router.get('/', function (req, res, next) {
 
 });
 
-router.post('/:id/comments', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
-    issue = req.issue;
-    issue.actions.push(req.body);
+/**
+ * @api {post} /issues/:id/comments Create a new Comment
+ * @apiVersion 0.0.1
+ * @apiName PostComment
+ * @apiGroup Issues
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission citizen
+ *
+ * @apiParam {String=comment} type Type of action - should be 'Comment'
+ * @apiParam {String} content Description of the comment
+ * @apiParam {String} author Author of the comment
+ * @apiParam {Date} [createdAt] Date of the comment
+ *
+ * @apiSuccess {String=comment} type Type of action - should be 'Comment'
+ * @apiSuccess {String} content Description of the comment
+ * @apiSuccess {String} author Author of the comment
+ * @apiSuccess {Date} [createdAt] Date of the comment
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+         "type": "comment",
+         "content": "There is a mistake with the location...",
+         "author": "joe",
+         "createdAt": "2016-02-27T16:42:19.565Z",
+         "_id": "56d1c54c77048d1005ea7417"
+       }
+  */
 
-    issue.save(function (err, updatedIssue) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-        res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
-    });
+router.post('/:id/comments', toolsFYS.CheckCitizenAuthorization, findIssue, function (req, res, next) {
+  if(req.body.type == 'comment'){
+      issue = req.issue;
+      issue.actions.push(req.body);
+
+      issue.save(function (err, updatedIssue) {
+          if (err) {
+              res.status(500).send(err);
+              return;
+          }
+          res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
+      });
+  }else{
+    res.status(400).send('Wrong action type');
+    return;
+  }
 });
 
+/**
+ * @api {post} /issues/:id/statuschanges Create a new statusChange
+ * @apiVersion 0.0.1
+ * @apiName PoststatusChange
+ * @apiGroup Issues
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission staff
+ *
+ * @apiParam {String=statusChange} type Type of action - should be 'statusChange'
+ * @apiParam {String} content New status of the issue
+ * @apiParam {String} author Author of the status change
+ * @apiParam {Date} [createdAt] Date of the status change
+ *
+ * @apiSuccess {String=statusChange} type Type of action - should be 'statusChange'
+ * @apiSuccess {String} content Description of the status change
+ * @apiSuccess {String} author Author of the status change
+ * @apiSuccess {Date} [createdAt] Date of the status change
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+         "type": "statusChange",
+         "content": "assigned",
+         "author": "joe",
+         "createdAt": "2016-02-27T16:42:19.565Z",
+         "_id": "56d1c54c77048d1005ea7417"
+       }
+  */
+
 router.post('/:id/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
+  if(req.body.type == 'statusChange'){
     issue = req.issue;
     issue.actions.push(req.body);
 
-    //A FAIRE function de changement status dans issue
+    // Change the status in issue
+    issue.status = req.body.content;
+
+    // Check if the status is assigned and if the assignedstaff
+    if (req.query.assignedStaff) {
+        issue.status.assignedStaff = req.query.assignedStaff;
+    }
 
     issue.save(function (err, updatedIssue) {
         if (err) {
@@ -414,6 +486,10 @@ router.post('/:id/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, f
         }
         res.send(updatedIssue.actions[updatedIssue.actions.length -1]);
     });
+  }else{
+    res.status(400).send('Wrong action type');
+    return;
+  }
 });
 
 /**
