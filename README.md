@@ -18,6 +18,10 @@ run nodejs server and go to root url: localhost:3000
 Case sensitive
 ## Installation
 
+mongoimport --db test --collection issues --file default_example_issues.json
+mongoimport --db test --collection issueTypes --file default_example_issueTypes.json
+mongoimport --db test --collection users --file default_example_users.json
+
 ```
 grunt
 ```
@@ -37,15 +41,15 @@ GET  /api/v1/issues?type=street HTTP/1.1
 ```
 ### Get the list of issues in a particular region
 ```http
-GET  /api/v1/issues?near=6.5,46.58&distance=10 HTTP/1.1
+GET  /api/v1/issues?near=6.5,46.58&distance=2000 HTTP/1.1
 ```
 ### Get the list of issues solved between two dates
 ```http
-GET  /api/v1/issues?statusIs=solved&since=:since&until=:until HTTP/1.1
+GET  /api/v1/issues?dateStatusIs=solved&dateSince=:since&dateUntil=:until HTTP/1.1
 ```
 ### Get the list of issues created between two dates that are still unresolved.
 ```http
-GET  /api/v1/issues?statusIsNot=solved&since=:since&until=:until HTTP/1.1
+GET  /api/v1/issues?statusIsNot=solved&dateStatusIs=created&dateSince=:since&dateUntil=:until HTTP/1.1
 ```
 ### Get the history of an issue (list of actions taken on the issue).
 ```http
