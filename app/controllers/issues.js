@@ -4,6 +4,7 @@ var express = require('express'),
         Issue = mongoose.model('Issue'),
         Action = mongoose.model('Action'),
         toolsFYS = require('toolsFYS');
+var _ = require("underscore");
 
 module.exports = function (app) {
     app.use('/api/v1/issues', router);
@@ -251,8 +252,9 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiParam {String} [name] Filter by name of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIs] Filter by indicated status of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIsNot] Filter by status of Issues (inverted)
- * @apiParam {Date} [since] Filter by date of creation
- * @apiParam {Date} [until] Filter by date of creation
+ * @apiParam (Date){Date} [dateSince] Filter by date
+ * @apiParam (Date){Date} [dateUntil] Filter by date
+ * @apiParam (Date){Date} [dateStatusIs=$statusIs] Filter by date of a certain status - required for a date if statutIs is not defined
  * @apiParam {Number[]} [near] Filter by a region indicate by a point with coordinates
  * @apiParam {Number} [distance=1000] Combinate with near and indicate the maximal distance (in meter) of the region (from the indicated center)
  * @apiParam {String} [author] Filter by author of Issues
@@ -323,29 +325,40 @@ router.get('/', function (req, res, next) {
       var statusIsNot = req.query.statusIsNot.split(',');
       criteria.status = {$nin: statusIsNot };
     }
-    //filter by since and until date
-    if(req.query.since && req.query.until){
-      //A FAIRE !!!
-       criteria.actions.createdAt = {
-        $gte : new Date(req.query.since),
-        $lte : new Date(req.query.until)
+
+    //filter by Date
+    if(req.query.dateSince || req.query.dateUntil){
+
+      //Work only if status is defined (either with dateStatusIs or statusIs)
+      if(req.query.dateStatusIs){
+        dateStatusIs = req.query.dateStatusIs.split(',');
+      }else if(req.query.statusIs){
+        dateStatusIs = req.query.statusIs.split(',');
+      }else{
+        res.status(400).send('Date filter require a status');
+        return;
+      }
+
+      if(req.query.dateSince && req.query.dateUntil){
+        datefilter = {$gte : new Date(req.query.dateSince ),$lte : new Date(req.query.dateUntil)};
+      }else if(req.query.dateSince){
+          datefilter = {$gte : new Date(req.query.dateSince )};
+      }else if(req.query.dateUntil){
+          datefilter = {$lte : new Date(req.query.dateUntil)};
+      }
+
+       criteria.actions = {
+         "$elemMatch": {
+           "content": {$in: dateStatusIs },
+           "createdAt":datefilter
+        }
       };
-    }else if(req.query.since){
-      //A FAIRE !!!
-       criteria.actions.createdAt = {
-        $gte : new Date(req.query.since)
-      };
-    }else if(req.query.until){
-      //A FAIRE !!!
-       criteria.actions.createdAt = {
-        $lte : new Date(req.query.until)
-      };
-    }
+  }
+
     //filter by near and distance
-    if (typeof(req.query.near) == "object" && req.query.near.length) {
-        //A TESTER + commenter distance en m, km ??? !!!
+    if (req.query.near) {
         var coordinates = req.query.near.split(',');
-        var distance = 1000; //Distance in meters, default is 1km
+        var distance = 1000; //Distance in meters, default is 1 km
 
         if (req.query.distance) {
           //parseInt param: String and Base 10
@@ -389,7 +402,7 @@ router.get('/', function (req, res, next) {
 });
 
 /**
- * @api {post} /issues/:id/comments Create a new Comment
+ * @api {post} /issues/:id/actions/comments Create a new Comment
  * @apiVersion 0.0.1
  * @apiName PostComment
  * @apiGroup Issues
@@ -418,7 +431,7 @@ router.get('/', function (req, res, next) {
        }
   */
 
-router.post('/:id/comments', toolsFYS.CheckCitizenAuthorization, findIssue, function (req, res, next) {
+router.post('/:id/actions/comments', toolsFYS.CheckCitizenAuthorization, findIssue, function (req, res, next) {
   if(req.body.type == 'comment'){
       issue = req.issue;
       issue.actions.push(req.body);
@@ -437,7 +450,7 @@ router.post('/:id/comments', toolsFYS.CheckCitizenAuthorization, findIssue, func
 });
 
 /**
- * @api {post} /issues/:id/statuschanges Create a new statusChange
+ * @api {post} /issues/:id/actions/statuschanges Create a new statusChange
  * @apiVersion 0.0.1
  * @apiName PoststatusChange
  * @apiGroup Issues
@@ -466,7 +479,7 @@ router.post('/:id/comments', toolsFYS.CheckCitizenAuthorization, findIssue, func
        }
   */
 
-router.post('/:id/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
+router.post('/:id/actions/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
   if(req.body.type == 'statusChange'){
     issue = req.issue;
     issue.actions.push(req.body);
@@ -490,6 +503,18 @@ router.post('/:id/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, f
     res.status(400).send('Wrong action type');
     return;
   }
+});
+
+router.get('/:id/actions', findIssue, function (req, res, next) {
+    res.send(req.issue.actions);
+});
+
+router.get('/:id/actions/statusChanges', findIssue, function (req, res, next) {
+    res.send(_.where(req.issue.actions, {type: "statusChange"}));
+});
+
+router.get('/:id/actions/comments', findIssue, function (req, res, next) {
+    res.send(_.where(req.issue.actions, {type: "comment"}));
 });
 
 /**

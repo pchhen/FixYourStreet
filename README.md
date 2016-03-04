@@ -15,7 +15,7 @@ It should include a brief explanation of the purpose of your API and instruction
 
 run nodejs server and go to root url: localhost:3000
 
-
+Case sensitive
 ## Installation
 
 ```
@@ -53,11 +53,11 @@ GET  /api/v1/issues/:id/actions HTTP/1.1
 ```
 ### Get the comments history of an issue
 ```http
-GET  /api/v1/issues/:id/actions HTTP/1.1
+GET  /api/v1/issues/:id/actions/comments HTTP/1.1
 ```
 ### Get the statusChanges history of an issue
 ```http
-GET  /api/v1/issues/:id/actions?type=statusChange HTTP/1.1
+GET  /api/v1/issues/:id/actions/statusChanges HTTP/1.1
 ```
 ### Get the list of users who have created most issues.
 ```http
