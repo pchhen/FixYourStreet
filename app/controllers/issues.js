@@ -254,7 +254,7 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiParam {Date} [since] Filter by date of creation
  * @apiParam {Date} [until] Filter by date of creation
  * @apiParam {Number[]} [near] Filter by a region indicate by a point with coordinates
- * @apiParam {Number} [distance] Combinate with near and indicate the maximal distance of the region (from the indicated center)
+ * @apiParam {Number} [distance=1000] Combinate with near and indicate the maximal distance (in meter) of the region (from the indicated center)
  * @apiParam {String} [author] Filter by author of Issues
  * @apiParam {String} [assignedStaff] Filter by assignedStaff of Issues
  * @apiParam {String} [type] Filter by type of Issues
@@ -345,7 +345,7 @@ router.get('/', function (req, res, next) {
     if (typeof(req.query.near) == "object" && req.query.near.length) {
         //A TESTER + commenter distance en m, km ??? !!!
         var coordinates = req.query.near.split(',');
-        var distance = 10;
+        var distance = 1000; //Distance in meters, default is 1km
 
         if (req.query.distance) {
           //parseInt param: String and Base 10
@@ -360,7 +360,7 @@ router.get('/', function (req, res, next) {
                 parseFloat(coordinates[1])
               ]
             },
-            //mètres, km ???
+            //Distance in meters
             $maxDistance: distance
           }
         };
