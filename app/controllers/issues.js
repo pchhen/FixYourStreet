@@ -252,11 +252,11 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiParam {String} [name] Filter by name of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIs] Filter by indicated status of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIsNot] Filter by status of Issues (inverted)
- * @apiParam (Date){Date} [dateSince] Filter by date
- * @apiParam (Date){Date} [dateUntil] Filter by date
- * @apiParam (Date){Date} [dateStatusIs=$statusIs] Filter by date of a certain status - required for a date if statutIs is not defined
- * @apiParam {Number[]} [near] Filter by a region indicate by a point with coordinates
- * @apiParam {Number} [distance=1000] Combinate with near and indicate the maximal distance (in meter) of the region (from the indicated center)
+ * @apiParam (Parameter Date){Date} [dateSince] Filter by date
+ * @apiParam (Parameter Date){Date} [dateUntil] Filter by date
+ * @apiParam (Parameter Date){Date} [dateStatusIs=$statusIs] Filter by date of a certain status - required for a date if statutIs is not defined
+ * @apiParam (Parameter Region){Number[]} [near] Filter by a region indicate by a point with coordinates
+ * @apiParam (Parameter Region){Number} [distance=1000] Combinate with near and indicate the maximal distance (in meter) of the region (from the indicated center)
  * @apiParam {String} [author] Filter by author of Issues
  * @apiParam {String} [assignedStaff] Filter by assignedStaff of Issues
  * @apiParam {String} [type] Filter by type of Issues
@@ -325,7 +325,6 @@ router.get('/', function (req, res, next) {
       var statusIsNot = req.query.statusIsNot.split(',');
       criteria.status = {$nin: statusIsNot };
     }
-
     //filter by Date
     if(req.query.dateSince || req.query.dateUntil){
 
@@ -353,7 +352,7 @@ router.get('/', function (req, res, next) {
            "createdAt":datefilter
         }
       };
-  }
+    }
 
     //filter by near and distance
     if (req.query.near) {
