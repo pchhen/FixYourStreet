@@ -1,5 +1,3 @@
-node_modules/*
-!node_modules/ToolsFYS
 public/components
 .sass-cache
 public/apidoc

@@ -1,29 +1,34 @@
 # FixYourStreet
 COMEM Web Services 2016 Project
+
+The project FixYourStreet was developed during one week of course (and some additional evening) at the University of Yverdon-Les-Bains. The goal is to provide an Api rest for a future application of citizen engagement.
+In this application, the citizen supplied with his smartphone will have the possibility to notify damage in his city environment. It can be for example a broken streetlight or a graffiti.
+
+The project is based on the specification provided on the iflux blog: http://www.iflux.io/use-case/2015/02/03/citizen-engagement.html
+All others students projects and informations can be find here:
 [https://github.com/SoftEng-HEIGVD/Teaching-HEIGVD-CM_WEBS-2016](https://github.com/SoftEng-HEIGVD/Teaching-HEIGVD-CM_WEBS-2016)
-
-http://www.iflux.io/use-case/2015/02/03/citizen-engagement.html
-
-Please **REWRITE** this README.
-It should include a brief explanation of the purpose of your API and instructions on how to run it locally.
 
 ## Requirements
 
 ### Node.js and npm
+Tested compatibility with the v4.3.2 LTS
 For installation, follow the instructions here : https://nodejs.org/
 
 ### MongoDB
 For installation, follow precisely the instructions here : https://docs.mongodb.org/manual/administration/install-community/
 
-## API Documentation
+### npm Modules
+#### Yeoman
+Contain 3 essentials tools for the workflow: Yo, Grunt, Bower
+Run these command in your terminal
+```
+npm install -g npm
+```
+```
+npm install -g bower grunt-cli yo
+```
 
-/public/apidoc
-
-run nodejs server and go to root url: localhost:3000
-
-Case sensitive
-
-## Run the api REST
+## Run the API REST Server
 
 ### Run the mongoDB database
 Run the executable file **mongod** (mongod.exe on windows) which is contained in your mongodb install directory
@@ -43,6 +48,12 @@ mongoimport --db project1-development --collection issuetypes --file basicDatase
 mongoimport --db project1-development --collection issues --file basicDataset/issues.json
 ```
 **Note** if you are using babun on windows the path should be like (if it's not in your path) : "/c/MongoDB/Server/3.2/bin/mongoimport"
+
+## API Documentation
+
+The API produced with Apidoc is available at: /public/apidoc
+
+After running the server, you can also find it directly at the root url: http://localhost:3000
 
 ## Example of queries
 ### Get the list of staff
