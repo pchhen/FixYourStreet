@@ -2,7 +2,6 @@ var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         Issue = mongoose.model('Issue'),
-        Action = mongoose.model('Action'),
         toolsFYS = require('toolsFYS');
 var _ = require("underscore");
 
@@ -341,9 +340,9 @@ router.get('/', function (req, res, next) {
       if(req.query.dateSince && req.query.dateUntil){
         datefilter = {$gte : new Date(req.query.dateSince ),$lte : new Date(req.query.dateUntil)};
       }else if(req.query.dateSince){
-          datefilter = {$gte : new Date(req.query.dateSince )};
+        datefilter = {$gte : new Date(req.query.dateSince )};
       }else if(req.query.dateUntil){
-          datefilter = {$lte : new Date(req.query.dateUntil)};
+        datefilter = {$lte : new Date(req.query.dateUntil)};
       }
 
        criteria.actions = {
@@ -449,7 +448,7 @@ router.post('/:id/actions/comments', toolsFYS.CheckCitizenAuthorization, findIss
 });
 
 /**
- * @api {post} /issues/:id/actions/statuschanges Create a new statusChange
+ * @api {post} /issues/:id/actions/statusChanges Create a new statusChange
  * @apiVersion 0.0.1
  * @apiName PoststatusChange
  * @apiGroup Issues
@@ -478,7 +477,7 @@ router.post('/:id/actions/comments', toolsFYS.CheckCitizenAuthorization, findIss
        }
   */
 
-router.post('/:id/actions/statuschanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
+router.post('/:id/actions/statusChanges', toolsFYS.CheckStaffAuthorization, findIssue, function (req, res, next) {
   if(req.body.type == 'statusChange'){
     issue = req.issue;
     issue.actions.push(req.body);

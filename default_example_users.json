@@ -18,3 +18,223 @@
     "role" : "citizen",
     "password" : "12345"
 }
+{
+    "_id" : "martin",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "joe",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "nastya",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "romain",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "leon",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "thomas",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "claire",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "samantha",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "enzo",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "lucas",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "emma",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "lea",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "clara",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "nathan",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "manon",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "chloe",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "hugo",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "camille",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "sarah",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "jade",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "clement",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "louis",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "raphael",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "lola",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "matheo",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "alexandre",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "antoine",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "lucie",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "yanis",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "paul",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "baptiste",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "marie",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "ethan",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "jules",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "quentin",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "axel",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "zoe",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "mathilde",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "maxence",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "maelys",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "lena",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "charlotte",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "pauline",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "lina",
+    "role" : "citizen",
+    "password" : "12345"
+}

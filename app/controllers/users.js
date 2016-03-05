@@ -27,7 +27,7 @@ module.exports = function (app) {
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "_id": "jim",
+ *       "_id": "alain",
  *       "role": "citizen",
  *       "password": "password"
  *     }
@@ -38,7 +38,7 @@ router.post('/citizen', function (req, res, next) {
     var user = new User(req.body);
     user.role = 'citizen';
 
-    //**Need a hashfunction for the password
+    //**Need a hashfunction for the password (for future improvement)
 
     user.save(function (err, createdUser) {
         if (err) {
@@ -80,7 +80,7 @@ router.post('/staff', toolsFYS.CheckStaffAuthorization, function (req, res, next
     var user = new User(req.body);
     user.role = 'staff';
 
-    //**Need a hashfunction for the password
+    //**Need a hashfunction for the password (for future improvement)
 
     user.save(function (err, createdUser) {
         if (err) {
@@ -175,7 +175,7 @@ router.delete('/:id', function (req, res, next) {
  * @apiGroup Users
  * @apiPermission none
  *
- * @apiParam {String} _id Name of the Type.
+ * @apiParam {String} _id Name of the User.
  *
  * @apiSuccess {String} _id Name of the User.
  * @apiSuccess {String} role Role of the User.
@@ -203,11 +203,11 @@ router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, 
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
  *
- * @apiParam {String} [issueStatusIs] Filter by Issue status set by a user
- * @apiParam {String} [issueStatusIsNot] Filter by Issue status not set by a user
- * @apiParam {String} [page=1] Actual page number
- * @apiParam {String} [pageSize=30] Numbers of user per page
- * @apiParam {String=leastFirst,mostFirst} [order="mostFirst"] Ascending or descending order
+ * @apiParam (Parameter Pagination){String} [page=1] Actual page number
+ * @apiParam (Parameter Pagination){String} [pageSize=30] Numbers of user per page
+ * @apiParam (Parameter Group By User){String} [issueStatusIs] Filter by Issue status set by a user
+ * @apiParam (Parameter Group By User){String} [issueStatusIsNot] Filter by Issue status not set by a user
+ * @apiParam (Parameter Group By User){String=leastFirst,mostFirst} [order="mostFirst"] Ascending or descending order
  *
  * @apiSuccess {String} _id Name of the User.
  * @apiSuccess {String} role Role of the User.
@@ -232,7 +232,6 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
           limit = pageSize;
 
       var issueOrder = -1;
-
       var criteriaUser = {};
       var criteriaIssue = {};
 
@@ -240,21 +239,27 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
       if (req.query.role) {
           criteriaUser.role = req.query.role;
       }
-      //filter by statusIs
-      if(req.query.issueStatusIs){
-        var IssueStatusIs = req.query.issueStatusIs.split(',');
-        criteriaIssue.status = {$in: IssueStatusIs };
-      }
-      //filter by statusIsNot
-      if(req.query.issueStatusIsNot){
-        var IssueStatusIsNot = req.query.issueStatusIsNot.split(',');
-        criteriaIssue.status = {$nin: IssueStatusIsNot };
-      }
+      //filter by Aggregation of users
+      if(req.query.issueStatusIs || req.query.issueStatusIsNot){
 
-      if(req.query.order == 'leastFirst'){
-        issueOrder = 1;
-      }
+        //filter by statusIs
+        if(req.query.issueStatusIs){
+          var IssueStatusIs = req.query.issueStatusIs.split(',');
+          criteriaIssue.actions = {
+            "$elemMatch": {
+              "status": {$in: IssueStatusIs }
+            }
+          };
+        }
+        //filter by statusIsNot
+        if(req.query.issueStatusIsNot){
+          var IssueStatusIsNot = req.query.issueStatusIsNot.split(',');
+          criteriaIssue.actions.status = {$nin: IssueStatusIsNot };
+        }
 
+        if(req.query.order == 'leastFirst'){
+          issueOrder = 1;
+        }
 
         Issue.aggregate([
           {
@@ -286,8 +291,14 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
 
         });
 
+      }
 
-      // Count all users (without filters).
+
+
+
+
+
+      // Pagination : Count all users (without filters).
       countAllUsers = function (callback) {
         User.count(function(err, totalCount) {
           if (err) {
@@ -298,7 +309,7 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
         });
       };
 
-      // Count books matching the filters.
+      // Pagination : Count books matching the filters.
       countFilteredUsers = function (callback) {
         User.count(criteriaUser, function(err, filteredCount) {
           if (err) {

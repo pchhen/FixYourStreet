@@ -40,7 +40,7 @@ Run these command from the project folder
 
 ```
 mongoimport --db project1-development --collection users --file default_example_users.json
-mongoimport --db project1-development --collection issueTypes --file default_example_issuesTypes.json
+mongoimport --db project1-development --collection issuetypes --file default_example_issuetypes.json
 mongoimport --db project1-development --collection issues --file default_example_issues.json
 ```
 **Note** if you are using babun on windows the path should be like (if it's not in your path) : "/c/MongoDB/Server/3.2/bin/mongoimport"

@@ -6,7 +6,7 @@
     "type" : "graffiti",
     "actions" : [
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "created",
             "author" : "luc",
             "createdAt" : "2016-02-15T10:00:00"
@@ -21,10 +21,9 @@
     "tags" : [
         "horrible", "large grafiti", "wall"
     ],
-    "location" : [
-        8.959827,
-        46.008075
-    ]
+    "location" : {
+      "coordinates":[8.959827,46.008075]
+    }
 }
 {
     "name" : "Stroboscopic streetlight",
@@ -35,13 +34,13 @@
     "type" : "streetlight",
     "actions" : [
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "created",
             "author" : "luc",
             "createdAt" : "2016-01-15T19:30:00"
         },
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "assigned",
             "author" : "alain",
             "createdAt" : "2016-02-17T12:00:00"
@@ -50,10 +49,9 @@
     "tags" : [
         "lamp", "annoying", "led light"
     ],
-    "location" : [
-        8.964361,
-        46.014651
-    ]
+    "location" : {
+      "coordinates":[8.964361,46.014651]
+    }
 }
 {
     "name" : "Burned bin",
@@ -64,19 +62,19 @@
     "type" : "bin",
     "actions" : [
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "created",
             "author" : "patrick",
             "createdAt" : "2016-01-01T08:30:00"
         },
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "assigned",
             "author" : "patrick",
             "createdAt" : "2016-01-01T08:30:00"
         },
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "in_progress",
             "author" : "patrick",
             "createdAt" : "2016-01-01T08:30:00"
@@ -88,7 +86,7 @@
             "createdAt" : "2016-01-03T15:30:00"
         },
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "solved",
             "author" : "patrick",
             "createdAt" : "2016-01-04T10:30:00"
@@ -97,10 +95,9 @@
     "tags" : [
         "fire", "school"
     ],
-    "location" : [
-        8.961783,
-        46.014260
-    ]
+    "location" : {
+      "coordinates":[8.961783,46.014260]
+    }
 }
 {
     "name" : "Damaged political advertising display",
@@ -111,13 +108,13 @@
     "type" : "advertising",
     "actions" : [
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "created",
             "author" : "milou",
             "createdAt" : "2016-02-03T07:30:00"
         },
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "assigned",
             "author" : "patrick",
             "createdAt" : "2016-02-03T11:30:00"
@@ -129,7 +126,7 @@
             "createdAt" : "2016-02-05T16:30:00"
         },
         {
-            "type" : "statutChange",
+            "type" : "statusChange",
             "content" : "solved",
             "author" : "alain",
             "createdAt" : "2016-02-05T16:31:00"
@@ -138,8 +135,7 @@
     "tags" : [
         "political", "damaged", "ads"
     ],
-    "location" : [
-        8.946594,
-        45.989298
-    ]
+    "location" : {
+      "coordinates":[8.946594,45.989298]
+    }
 }

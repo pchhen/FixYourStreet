@@ -5,7 +5,7 @@ var express = require('express'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
-    app.use('/api/v1/issuesTypes', router);
+    app.use('/api/v1/issueTypes', router);
 };
 
 /**
