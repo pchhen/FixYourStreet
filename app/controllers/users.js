@@ -11,7 +11,7 @@ module.exports = function (app) {
 
 /**
  * @api {post} /users/citizen Create a new Citizen
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PostCitizen
  * @apiGroup Users
  * @apiPermission none
@@ -51,7 +51,7 @@ router.post('/citizen', function (req, res, next) {
 
 /**
  * @api {post} /users/staff Create a new Staff
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PostStaff
  * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
@@ -93,7 +93,7 @@ router.post('/staff', toolsFYS.CheckStaffAuthorization, function (req, res, next
 
 /**
  * @api {put} /users/:id Update a User
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PutUser
  * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
@@ -134,7 +134,7 @@ router.put('/:id', toolsFYS.CheckStaffAuthorization, findUser, function (req, re
 
 /**
  * @api {delete} /users/:id Delete a User
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName DeleteUser
  * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
@@ -169,10 +169,12 @@ router.delete('/:id', function (req, res, next) {
 
 /**
  * @api {get} /users/:id Read data of a user
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetUser
  * @apiGroup Users
- * @apiPermission none
+ * @apiHeader {String} X-USERID Username.
+ * @apiHeader {String} X-USERHASH Password hashed of the Username.
+ * @apiPermission citizen
  *
  * @apiParam {String} _id Name of the User.
  *
@@ -195,19 +197,19 @@ router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, 
 
 /**
  * @api {get} /users List all Users
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetUsers
  * @apiGroup Users
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
  *
- * @apiParam {String} [role] Role of the User (not working combined with "Parameter Group by")
+ * @apiParam {String} [role] Role of the User (Note: doesn't work combined with "Parameter Group by")
  *
- * @apiParam (Parameter Group by User){String} [issueStatusIs] Filter by Issue status set by a user
- * @apiParam (Parameter Group by User){String} [issueStatusIsNot] Filter by Issue status not set by a user
- * @apiParam (Parameter Group by User){boolean} [assignedStaff] Filter by Issue status set by a assigned user
- * @apiParam (Parameter Group by User){String=leastFirst,mostFirst} [order="mostFirst"] Ascending or descending order
+ * @apiParam (Parameter Group by){String} [issueStatusIs] Filter by Issue status set by a user
+ * @apiParam (Parameter Group by){String} [issueStatusIsNot] Filter by Issue status not set by a user
+ * @apiParam (Parameter Group by){boolean} [assignedStaff] Filter by Issue status set by an assigned user
+ * @apiParam (Parameter Group by){String=leastFirst,mostFirst} [order="mostFirst"] ASCending or DESCending order
  *
  * @apiSuccess {String} _id Name of the User.
  * @apiSuccess {String} role Role of the User.

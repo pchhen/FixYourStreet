@@ -12,7 +12,7 @@ module.exports = function (app) {
 
  /**
   * @api {post} /issues Create a new Issue
-  * @apiVersion 0.0.1
+  * @apiVersion 1.0.0
   * @apiName PostIssue
   * @apiGroup Issues
   * @apiHeader {String} X-USERID Username.
@@ -27,8 +27,8 @@ module.exports = function (app) {
   * @apiParam {String} author Author of the Issue
   * @apiParam {String} [assignedStaff] Staff assigned to work on the Issue
   * @apiParam {String} type Type of the Issue
-  * @apiParam {String[]} tags Keywords describing the Issue
-  * @apiParam {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+  * @apiParam {String[]} [tags] Keywords describing the Issue
+  * @apiParam {Object} actions List of actions - Comments and StatusChanges
   * @apiParam {String=comment,statusChange} actions.type Type of the action
   * @apiParam {String} actions.content Description for comment action or status for statusChange action
   * @apiParam {Date} [actions.createdAt=now] Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
@@ -44,7 +44,7 @@ module.exports = function (app) {
   * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
   * @apiSuccess {String} type Type of the Issue
   * @apiSuccess {String[]} tags Keywords describing the Issue
-  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges
   * @apiSuccess {String} actions.type Type of the action
   * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
   * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
@@ -99,7 +99,7 @@ router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
 
 /**
  * @api {put} /issues/:id Update an Issue
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PutIssue
  * @apiGroup Issues
  * @apiHeader {String} X-USERID Username.
@@ -127,7 +127,7 @@ router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
  * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
  * @apiSuccess {String} type Type of the Issue
  * @apiSuccess {String[]} tags Keywords describing the Issue
- * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+ * @apiSuccess {Object} actions List of actions - Comments and StatusChanges
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
  * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
@@ -182,7 +182,7 @@ router.put('/:id', findIssue, function (req, res, next) {
 
 /**
  * @api {get} /issues/:id Read data of an Issue
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetIssue
  * @apiGroup Issues
  * @apiPermission none
@@ -200,7 +200,7 @@ router.put('/:id', findIssue, function (req, res, next) {
  * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
  * @apiSuccess {String} type Type of the Issue
  * @apiSuccess {String[]} tags Keywords describing the Issue
- * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+ * @apiSuccess {Object} actions List of actions - Comments and StatusChanges
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
  * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
@@ -238,7 +238,7 @@ router.get('/:id', findIssue, function (req, res, next) {
 
 /**
  * @api {get} /issues/ List and filter all Issues
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetIssues
  * @apiGroup Issues
  * @apiPermission none
@@ -268,7 +268,7 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiSuccess {String} assignedStaff Staff assigned to work on the Issue
  * @apiSuccess {String} type Type of the Issue
  * @apiSuccess {String[]} tags Keywords describing the Issue
- * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
+ * @apiSuccess {Object} actions List of actions - Comments and StatusChanges
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
  * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
@@ -464,19 +464,19 @@ router.get('/', function (req, res, next) {
 
 /**
  * @api {post} /issues/:id/actions/comments Create a new Comment
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PostComment
  * @apiGroup Issues Actions
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission citizen
  *
- * @apiParam {String=comment} type Type of Action - should be 'Comment'
+ * @apiParam {String=comment} type Type of Action
  * @apiParam {String} content Description of the comment
  * @apiParam {String} author Author of the comment
  * @apiParam {Date} [createdAt=now] Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
  *
- * @apiSuccess {String=comment} type Type of action - should be 'Comment'
+ * @apiSuccess {String=comment} type Type of action
  * @apiSuccess {String} content Description of the comment
  * @apiSuccess {String} author Author of the comment
  * @apiSuccess {Date} createdAt=now Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
@@ -511,19 +511,19 @@ router.post('/:id/actions/comments', toolsFYS.CheckCitizenAuthorization, findIss
 
 /**
  * @api {post} /issues/:id/actions/statusChanges Create a new statusChange
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PoststatusChange
  * @apiGroup Issues Actions
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
  *
- * @apiParam {String=statusChange} type Type of Action - should be 'statusChange'
- * @apiParam {String} content New status of the issue
+ * @apiParam {String=statusChange} type Type of Action
+ * @apiParam {String} content New status of the Issue
  * @apiParam {String} author Author of the status change
  * @apiParam {Date} [createdAt=now] Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
  *
- * @apiSuccess {String=statusChange} type Type of action - should be 'statusChange'
+ * @apiSuccess {String=statusChange} type Type of action
  * @apiSuccess {String} content Description of the status change
  * @apiSuccess {String} author Author of the status change
  * @apiSuccess {Date} createdAt=now Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
@@ -566,7 +566,7 @@ router.post('/:id/actions/statusChanges', toolsFYS.CheckStaffAuthorization, find
 
 /**
  * @api {get} /issues/:id/actions List all Actions of an Issue
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetActions
  * @apiGroup Issues Actions
  * @apiPermission none
@@ -600,7 +600,7 @@ router.get('/:id/actions', findIssue, function (req, res, next) {
 
 /**
  * @api {get} /issues/:id/actions/statusChanges List all StatusChanges of an Issue
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetStatusChanges
  * @apiGroup Issues Actions
  * @apiPermission none
@@ -628,7 +628,7 @@ router.get('/:id/actions/statusChanges', findIssue, function (req, res, next) {
 
 /**
  * @api {get} /issues/:id/actions/comments List all Comments of an Issue
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetComments
  * @apiGroup Issues Actions
  * @apiPermission none

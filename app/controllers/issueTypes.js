@@ -5,12 +5,12 @@ var express = require('express'),
         toolsFYS = require('toolsFYS');
 
 module.exports = function (app) {
-    app.use('/api/v1/issueTypes', router);
+    app.use('/api/v1/issuesTypes', router);
 };
 
 /**
  * @api {post} /issuesTypes Create a new type
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PostType
  * @apiGroup Issues Types
  * @apiHeader {String} X-USERID Username.
@@ -46,7 +46,7 @@ router.post('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
 
 /**
  * @api {put} /issuesTypes/:id Update a type
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName PutType
  * @apiGroup Issues Types
  * @apiHeader {String} X-USERID Username.
@@ -83,7 +83,7 @@ router.put('/:id', toolsFYS.CheckStaffAuthorization, findType, function (req, re
 
 /**
  * @api {delete} /issuesTypes/:id Delete a type
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName DeleteType
  * @apiGroup Issues Types
  * @apiHeader {String} X-USERID Username.
@@ -114,7 +114,7 @@ router.delete('/:id', toolsFYS.CheckStaffAuthorization, function (req, res, next
 
 /**
  * @api {get} /issuesTypes List all types
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetTypes
  * @apiGroup Issues Types
  * @apiPermission none
@@ -146,7 +146,7 @@ router.get('/', function (req, res, next) {
 
 /**
  * @api {get} /issuesTypes/:id Read data of a type
- * @apiVersion 0.0.1
+ * @apiVersion 1.0.0
  * @apiName GetType
  * @apiGroup Issues Types
  * @apiPermission none
