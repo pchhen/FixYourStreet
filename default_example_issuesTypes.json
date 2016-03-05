@@ -1,0 +1,16 @@
+{
+    "_id" : "graffiti",
+    "description" : "Any kind of graffiti"
+}
+{
+    "_id" : "streetlight",
+    "description" : "Broken light in the street"
+}
+{
+    "_id" : "bin",
+    "description" : "Broken bin in the street"
+}
+{
+    "_id" : "advertising",
+    "description" : "Broken or damaged advertising display"
+}

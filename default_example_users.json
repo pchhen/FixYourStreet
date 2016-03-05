@@ -1,0 +1,20 @@
+{
+    "_id" : "alain",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "patrick",
+    "role" : "staff",
+    "password" : "12345"
+}
+{
+    "_id" : "milou",
+    "role" : "citizen",
+    "password" : "12345"
+}
+{
+    "_id" : "luc",
+    "role" : "citizen",
+    "password" : "12345"
+}

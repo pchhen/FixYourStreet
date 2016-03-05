@@ -1,0 +1,145 @@
+{
+    "name" : "Multi-colored racist graffiti",
+    "description" : "An horrible graffiti in Lugano Viale Castagnola Street",
+    "status" : "created",
+    "author" : "luc",
+    "type" : "graffiti",
+    "actions" : [
+        {
+            "type" : "statutChange",
+            "content" : "created",
+            "author" : "luc",
+            "createdAt" : "2016-02-15T10:00:00.000Z"
+        },
+        {
+            "type" : "comment",
+            "content" : "I need to add that I'm really disappointed by young people!",
+            "author" : "luc",
+            "createdAt" : "2016-02-15T15:00:00.000Z"
+        }
+    ],
+    "tags" : [
+        "horrible", "large grafiti", "wall"
+    ],
+    "location" : [
+        8.959827,
+        46.008075
+    ]
+}
+{
+    "name" : "Stroboscopic streetlight",
+    "description" : "One streetlight on the Vial al Fiume Street in Lugano is about to died",
+    "status" : "created",
+    "author" : "milou",
+    "assignedStaff": "alain",
+    "type" : "streetlight",
+    "actions" : [
+        {
+            "type" : "statutChange",
+            "content" : "created",
+            "author" : "luc",
+            "createdAt" : "2016-01-15T19:30:00.000Z"
+        },
+        {
+            "type" : "statutChange",
+            "content" : "assigned",
+            "author" : "alain",
+            "createdAt" : "2016-02-17T12:00:00.000Z"
+        }
+    ],
+    "tags" : [
+        "lamp", "annoying", "led light"
+    ],
+    "location" : [
+        8.964361,
+        46.014651
+    ]
+}
+{
+    "name" : "Burned fire",
+    "description" : "It seems that a fire destroy the bin next to the Scuola Media Viganello School",
+    "status" : "created",
+    "author" : "patrick",
+    "assignedStaff": "patrick",
+    "type" : "streetlight",
+    "actions" : [
+        {
+            "type" : "statutChange",
+            "content" : "created",
+            "author" : "patrick",
+            "createdAt" : "2016-01-01T08:30:00.000Z"
+        },
+        {
+            "type" : "statutChange",
+            "content" : "assigned",
+            "author" : "patrick",
+            "createdAt" : "2016-01-01T08:30:00.000Z"
+        },
+        {
+            "type" : "statutChange",
+            "content" : "in_progress",
+            "author" : "patrick",
+            "createdAt" : "2016-01-01T08:30:00.000Z"
+        },
+        {
+            "type" : "comment",
+            "content" : "The place is now cleaned and the new bin will bin installed tommorow",
+            "author" : "patrick",
+            "createdAt" : "2016-01-03T15:30:00.000Z"
+        },
+        {
+            "type" : "statutChange",
+            "content" : "solved",
+            "author" : "patrick",
+            "createdAt" : "2016-01-04T10:30:00.000Z"
+        }
+    ],
+    "tags" : [
+        "fire", "school"
+    ],
+    "location" : [
+        8.961783,
+        46.014260
+    ]
+}
+{
+    "name" : "Damaged political advertising display",
+    "description" : "The new UDC campaign display was damaged during the night",
+    "status" : "created",
+    "author" : "milou",
+    "assignedStaff": "alain",
+    "type" : "advertising",
+    "actions" : [
+        {
+            "type" : "statutChange",
+            "content" : "created",
+            "author" : "milou",
+            "createdAt" : "2016-02-03T07:30:00.000Z"
+        },
+        {
+            "type" : "statutChange",
+            "content" : "assigned",
+            "author" : "patrick",
+            "createdAt" : "2016-02-03T11:30:00.000Z"
+        },
+        {
+            "type" : "comment",
+            "content" : "The issue is now sended to the appropriate advertising company",
+            "author" : "alain",
+            "createdAt" : "2016-02-05T16:30:00.000Z"
+        },
+        {
+            "type" : "statutChange",
+            "content" : "solved",
+            "author" : "alain",
+            "createdAt" : "2016-02-05T16:31:00.000Z"
+        }
+    ],
+    "tags" : [
+        "political", "damaged", "ads"
+    ],
+    "location" : [
+        8.946594,
+        45.989298
+    ]
+}
