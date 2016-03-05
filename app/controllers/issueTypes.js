@@ -113,7 +113,7 @@ router.delete('/:id', toolsFYS.CheckStaffAuthorization, function (req, res, next
 });
 
 /**
- * @api {get} /issuesTypes/ List all types
+ * @api {get} /issuesTypes List all types
  * @apiVersion 0.0.1
  * @apiName GetTypes
  * @apiGroup Issues Types

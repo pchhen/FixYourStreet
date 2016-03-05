@@ -195,7 +195,7 @@ router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, 
 });
 
 /**
- * @api {get} /users/ List all Users
+ * @api {get} /users List all Users
  * @apiVersion 0.0.1
  * @apiName GetUsers
  * @apiGroup Users
@@ -203,15 +203,19 @@ router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, 
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
  *
- * @apiParam (Parameter Pagination){String} [page=1] Actual page number
- * @apiParam (Parameter Pagination){String} [pageSize=30] Numbers of user per page
- * @apiParam (Parameter Group By User){String} [issueStatusIs] Filter by Issue status set by a user
- * @apiParam (Parameter Group By User){String} [issueStatusIsNot] Filter by Issue status not set by a user
- * @apiParam (Parameter Group By User){String=leastFirst,mostFirst} [order="mostFirst"] Ascending or descending order
+ * @apiParam {String} [role] Role of the User (not working combined with "Parameter Group by")
+ *
+ * @apiParam (Parameter Group by User){String} [issueStatusIs] Filter by Issue status set by a user
+ * @apiParam (Parameter Group by User){String} [issueStatusIsNot] Filter by Issue status not set by a user
+ * @apiParam (Parameter Group by User){boolean} [assignedStaff] Filter by Issue status set by a assigned user
+ * @apiParam (Parameter Group by User){String=leastFirst,mostFirst} [order="mostFirst"] Ascending or descending order
  *
  * @apiSuccess {String} _id Name of the User.
  * @apiSuccess {String} role Role of the User.
  * @apiSuccess {String} password Password of the User.
+ *
+ * @apiSuccess (Group by Success 200) {String} _id Name of the User.
+ * @apiSuccess (Group by Success 200) {String} total Total of Issue by user
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -220,26 +224,21 @@ router.get('/:id', toolsFYS.CheckCitizenAuthorization, findUser, function (req, 
  *       "role": "citizen",
  *       "password": "password"
  *     }
+ *
+ * @apiSuccessExample Group by Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "_id": "joe",
+ *       "total": "2",
+ *     }
  */
 
 router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
-      // Get page and page size for pagination.
-      var page = req.query.page ? parseInt(req.query.page, 10) : 1,
-          pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 30;
-
-      // Convert page and page size to offset and limit.
-      var offset = (page - 1) * pageSize,
-          limit = pageSize;
-
       var issueOrder = -1;
       var criteriaUser = {};
       var criteriaActions = {};
       var criteriaAssigned = {};
 
-      // Filter by role
-      if (req.query.role) {
-          criteriaUser.role = req.query.role;
-      }
       //filter by Aggregation of users
       if(req.query.issueStatusIs || req.query.issueStatusIsNot){
 
@@ -255,35 +254,33 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
           //content contained the status in the subdocument actions
           criteriaActions = {status:{$nin: IssueStatusIsNot }};
         }
-
+        // Filter order
         if(req.query.order == 'leastFirst'){
           issueOrder = 1;
         }
-
+        // Filter assignedStaff
         if(req.query.assignedStaff){
           criteriaAssigned = {cmp_value: {$eq:true}};
         }
 
-        //criteriaIssue = {"actions.author" : "patrick" };
-
         Issue.aggregate([
-          {
+          { // Make a document for each actions
             $unwind:'$actions'
           },
-          {
+          { // Match the status criteria
             $match: criteriaActions
           },
-          {
+          { // Filter assignedStaff - Used to compare if the author of the status is also the assignedStaff
             $project: {
               _id: '$actions.author',
               cmp_value: {$eq: ['$assignedStaff', '$actions.author']},
               total: { $sum: 1 }
             }
           },
-          {
+          { // Filter assignedStaff - Remove object when the author of the status is not the assignedStaff
             $match: criteriaAssigned
           },
-          {
+          { // Group by _id of the $project -> author
             $group: {
               _id: '$_id',
               total: { $sum: 1 }
@@ -291,132 +288,31 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
           },
           {
             $sort: { total: issueOrder }
-          },
-          {
-            $skip: offset
-          },
-          {
-            $limit: limit
           }
-        ], function(err, usersCounts) {
+        ], function(err, resultsUsersAgg) {
           if (err) {
             res.status(500).send(err);
             return;
           }
-          console.log(usersCounts);
-          //callback(undefined, usersCounts);
-
-
+          res.send(resultsUsersAgg);
         });
 
-      }
+      }else{
 
-
-
-
-
-
-      // Pagination : Count all users (without filters).
-      countAllUsers = function (callback) {
-        User.count(function(err, totalCount) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(undefined, totalCount);
-          }
-        });
-      };
-
-      // Pagination : Count books matching the filters.
-      countFilteredUsers = function (callback) {
-        User.count(criteriaUser, function(err, filteredCount) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(undefined, filteredCount);
-          }
-        });
-      };
-
-      // Find books matching the filters.
-      findMatchingUsers = function (callback) {
-
-        var query = User
-          .find(criteriaUser)
-          // Do not forget to sort, as pagination makes more sense with sorting.
-          .sort('_id')
-          .skip(offset)
-          .limit(limit);
-
-          //query = query.populate('_id');
-
-
-        // Execute the query.
-        query.exec(function(err, users) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(undefined, users);
-          }
-        });
-      };
-
-      // Set the pagination headers and send the matching books in the body.
-      sendResponse = function (err, results) {
-        if (err) {
-          res.status(500).send(err);
-          return;
+        // Filter by role
+        if (req.query.role) {
+            criteriaUser.role = req.query.role;
         }
 
-        var totalCount = results[0],
-            filteredCount = results[1],
-            users = results[2];
-
-        // Return the pagination data in headers.
-        res.set('X-Pagination-Page', page);
-        res.set('X-Pagination-Page-Size', pageSize);
-        res.set('X-Pagination-Total', totalCount);
-        res.set('X-Pagination-Filtered-Total', filteredCount);
-
-        res.send(users);
-      };
-
-    async.parallel([
-      countAllUsers,
-      countFilteredUsers,
-      findMatchingUsers
-    ], sendResponse);
-});
-/*
-function GroupUsersByIssues (criteria, order, offset, limit, callback){
-  Issue.aggregate([
-    {
-      $match: criteria
-    },
-    {
-      $group: {
-        _id: '$author',
-        total: { $sum: 1 }
+        User.find((criteriaUser)).sort('_id').exec(function (err, users) {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            res.send(users);
+        });
       }
-    },
-    {
-      $sort: { total: order }
-    },
-    {
-      $skip: offset
-    },
-    {
-      $limit: limit
-    }
-  ], function(err, usersCounts) {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
-    callback(undefined, usersCounts);
-
-  });
-}*/
+});
 
 /**
  * Middleware that finds the user corresponding to the :id URL parameter

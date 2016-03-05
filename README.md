@@ -94,5 +94,5 @@ GET  /api/v1/users?issueStatusIs=solved HTTP/1.1
 ```
 ### Get the list of users who have the least assigned issues not yet solved or rejected.
 ```http
-GET   /api/v1/users?issueStatusIsAtLeast=assigned&issueStatusIsNot=solved,rejected&order=leastFirst HTTP/1.1
+GET   /api/v1/users?issueStatusIsNot=solved,rejected&assignedStaff=true&order=leastFirst HTTP/1.1
 ```

@@ -10,7 +10,7 @@ module.exports = function (app) {
 };
 
  /**
-  * @api {post} /issues/ Create a new Issue
+  * @api {post} /issues Create a new Issue
   * @apiVersion 0.0.1
   * @apiName PostIssue
   * @apiGroup Issues
@@ -30,7 +30,7 @@ module.exports = function (app) {
   * @apiParam {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
   * @apiParam {String=comment,statusChange} actions.type Type of the action
   * @apiParam {String} actions.content Description for comment action or status for statusChange action
-  * @apiParam {Date} [actions.createdAt=now] Date of the action (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
+  * @apiParam {Date} [actions.createdAt=now] Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
   *
   * @apiSuccess {String} _id Id of the Issue
   * @apiSuccess {String} name Name of the Issue
@@ -46,8 +46,7 @@ module.exports = function (app) {
   * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
   * @apiSuccess {String} actions.type Type of the action
   * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
-  * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
-  * @apiSuccess {String} actions._id Id of the Action
+  * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
   *
   * @apiSuccessExample Success-Response:
   *     HTTP/1.1 200 OK
@@ -63,8 +62,7 @@ module.exports = function (app) {
             "type": "statusChange",
             "content": "created",
             "author": "joe",
-            "createdAt": "2016-02-27T16:42:19.565Z",
-            "_id": "56d1c54c77048d1005ea7417"
+            "createdAt": "2016-02-27T16:42:19.565Z"
           }
         ],
         "tags": [
@@ -131,8 +129,7 @@ router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
- * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
- * @apiSuccess {String} actions._id Id of the Issue
+ * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -148,8 +145,7 @@ router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
            "type": "statusChange",
            "content": "created",
            "author": "joe",
-           "createdAt": "2016-02-27T16:42:19.565Z",
-           "_id": "56d1c54c77048d1005ea7417"
+           "createdAt": "2016-02-27T16:42:19.565Z"
          }
        ],
        "tags": [
@@ -206,8 +202,7 @@ router.put('/:id', findIssue, function (req, res, next) {
  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
- * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
- * @apiSuccess {String} actions._id Id of the Action
+ * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -223,8 +218,7 @@ router.put('/:id', findIssue, function (req, res, next) {
            "type": "statusChange",
            "content": "created",
            "author": "joe",
-           "createdAt": "2016-02-27T16:42:19.565Z",
-           "_id": "56d1c54c77048d1005ea7417"
+           "createdAt": "2016-02-27T16:42:19.565Z"
          }
        ],
        "tags": [
@@ -251,8 +245,8 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiParam {String} [name] Filter by name of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIs] Filter by indicated status of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIsNot] Filter by status of Issues (inverted)
- * @apiParam (Parameter Date){Date} [dateSince] Filter by date (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
- * @apiParam (Parameter Date){Date} [dateUntil] Filter by date (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
+ * @apiParam (Parameter Date){Date} [dateSince] Filter by date (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
+ * @apiParam (Parameter Date){Date} [dateUntil] Filter by date (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
  * @apiParam (Parameter Date){Date} [dateStatusIs=$statusIs] Filter by date of a certain status - required for a date if statutIs is not defined
  * @apiParam (Parameter Region){Number[]} [near] Filter by a region indicate by a point with coordinates
  * @apiParam (Parameter Region){Number} [distance=1000] Combinate with near and indicate the maximal distance (in meter) of the region (from the indicated center)
@@ -274,8 +268,7 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
- * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
- * @apiSuccess {String} actions._id Id of the Action
+ * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -291,8 +284,7 @@ router.get('/:id', findIssue, function (req, res, next) {
            "type": "statusChange",
            "content": "created",
            "author": "joe",
-           "createdAt": "2016-02-27T16:42:19.565Z",
-           "_id": "56d1c54c77048d1005ea7417"
+           "createdAt": "2016-02-27T16:42:19.565Z"
          }
        ],
        "tags": [
@@ -403,20 +395,20 @@ router.get('/', function (req, res, next) {
  * @api {post} /issues/:id/actions/comments Create a new Comment
  * @apiVersion 0.0.1
  * @apiName PostComment
- * @apiGroup Issues
+ * @apiGroup Issues Actions
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission citizen
  *
- * @apiParam {String=comment} type Type of action - should be 'Comment'
+ * @apiParam {String=comment} type Type of Action - should be 'Comment'
  * @apiParam {String} content Description of the comment
  * @apiParam {String} author Author of the comment
- * @apiParam {Date} [createdAt] Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
+ * @apiParam {Date} [createdAt=now] Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
  *
  * @apiSuccess {String=comment} type Type of action - should be 'Comment'
  * @apiSuccess {String} content Description of the comment
  * @apiSuccess {String} author Author of the comment
- * @apiSuccess {Date} [createdAt] Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss)
+ * @apiSuccess {Date} createdAt=now Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -424,8 +416,7 @@ router.get('/', function (req, res, next) {
          "type": "comment",
          "content": "There is a mistake with the location...",
          "author": "joe",
-         "createdAt": "2016-02-27T16:42:19.565Z",
-         "_id": "56d1c54c77048d1005ea7417"
+         "createdAt": "2016-02-27T16:42:19.565Z"
        }
   */
 
@@ -451,20 +442,20 @@ router.post('/:id/actions/comments', toolsFYS.CheckCitizenAuthorization, findIss
  * @api {post} /issues/:id/actions/statusChanges Create a new statusChange
  * @apiVersion 0.0.1
  * @apiName PoststatusChange
- * @apiGroup Issues
+ * @apiGroup Issues Actions
  * @apiHeader {String} X-USERID Username.
  * @apiHeader {String} X-USERHASH Password hashed of the Username.
  * @apiPermission staff
  *
- * @apiParam {String=statusChange} type Type of action - should be 'statusChange'
+ * @apiParam {String=statusChange} type Type of Action - should be 'statusChange'
  * @apiParam {String} content New status of the issue
  * @apiParam {String} author Author of the status change
- * @apiParam {Date} [createdAt] Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
+ * @apiParam {Date} [createdAt=now] Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss.000Z, Time and Timezone can be omitted)
  *
  * @apiSuccess {String=statusChange} type Type of action - should be 'statusChange'
  * @apiSuccess {String} content Description of the status change
  * @apiSuccess {String} author Author of the status change
- * @apiSuccess {Date} [createdAt] Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss)
+ * @apiSuccess {Date} createdAt=now Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -472,8 +463,7 @@ router.post('/:id/actions/comments', toolsFYS.CheckCitizenAuthorization, findIss
          "type": "statusChange",
          "content": "assigned",
          "author": "joe",
-         "createdAt": "2016-02-27T16:42:19.565Z",
-         "_id": "56d1c54c77048d1005ea7417"
+         "createdAt": "2016-02-27T16:42:19.565Z"
        }
   */
 
@@ -503,13 +493,91 @@ router.post('/:id/actions/statusChanges', toolsFYS.CheckStaffAuthorization, find
   }
 });
 
+/**
+ * @api {get} /issues/:id/actions List all Actions of an Issue
+ * @apiVersion 0.0.1
+ * @apiName GetActions
+ * @apiGroup Issues Actions
+ * @apiPermission none
+ *
+ * @apiParam {String} _id Id of the Issue
+ *
+ * @apiSuccess {String=statusChange,comment} type Type of Action
+ * @apiSuccess {String} content Description or Status of the Action
+ * @apiSuccess {String} author Author of the Action
+ * @apiSuccess {Date} createdAt=now Date of the Action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *   {
+      "type": "statusChange",
+      "content": "in_progress",
+      "author": "patrick",
+      "createdAt": "2016-01-01T08:30:00.000Z"
+    },
+    {
+      "type": "comment",
+      "content": "The place is now cleaned and the new bin will bin installed tommorow",
+      "author": "patrick",
+      "createdAt": "2016-01-03T15:30:00.000Z"
+    }
+  */
+
 router.get('/:id/actions', findIssue, function (req, res, next) {
     res.send(req.issue.actions);
 });
 
+/**
+ * @api {get} /issues/:id/actions/statusChanges List all StatusChanges of an Issue
+ * @apiVersion 0.0.1
+ * @apiName GetStatusChanges
+ * @apiGroup Issues Actions
+ * @apiPermission none
+ *
+ * @apiParam {String} _id Id of the Issue
+ *
+ * @apiSuccess {String=statusChange} type Type of Action
+ * @apiSuccess {String} content Status of the Action
+ * @apiSuccess {String} author Author of the Action
+ * @apiSuccess {Date} createdAt=now Date of the Action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *   {
+      "type": "statusChange",
+      "content": "in_progress",
+      "author": "patrick",
+      "createdAt": "2016-01-01T08:30:00.000Z"
+    }
+  */
+
 router.get('/:id/actions/statusChanges', findIssue, function (req, res, next) {
     res.send(_.where(req.issue.actions, {type: "statusChange"}));
 });
+
+/**
+ * @api {get} /issues/:id/actions/comments List all Comments of an Issue
+ * @apiVersion 0.0.1
+ * @apiName GetComments
+ * @apiGroup Issues Actions
+ * @apiPermission none
+ *
+ * @apiParam {String} _id Id of the Issue
+ *
+ * @apiSuccess {String=comment} type Type of Action
+ * @apiSuccess {String} content Description of the Action
+ * @apiSuccess {String} author Author of the Action
+ * @apiSuccess {Date} createdAt=now Date of the Action (Iso format: yyyy-mm-ddThh:mm:ss.000Z)
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *   {
+      "type": "comment",
+      "content": "The place is now cleaned and the new bin will be installed tommorow",
+      "author": "patrick",
+      "createdAt": "2016-01-03T15:30:00.000Z"
+    }
+  */
 
 router.get('/:id/actions/comments', findIssue, function (req, res, next) {
     res.send(_.where(req.issue.actions, {type: "comment"}));
