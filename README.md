@@ -17,7 +17,7 @@ For installation, follow the instructions here : https://nodejs.org/
 ### MongoDB
 For installation, follow precisely the instructions here : https://docs.mongodb.org/manual/administration/install-community/
 
-### npm Modules
+### Npm Modules
 #### Yeoman
 Contain 3 essentials tools for the workflow: Yo, Grunt, Bower
 Run these commands in your terminal
@@ -55,7 +55,7 @@ The API produced with Apidoc is available at: /public/apidoc
 
 After running the server, you can also find it directly at the root url: http://localhost:3000
 
-## Example of queries
+## Examples of queries
 ### Get the list of staff
 
 ```http
