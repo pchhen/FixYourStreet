@@ -9,6 +9,12 @@ It should include a brief explanation of the purpose of your API and instruction
 
 ## Requirements
 
+### Node.js and npm
+For installation, follow the instructions here : https://nodejs.org/
+
+### MongoDB
+For installation, follow precisely the instructions here : https://docs.mongodb.org/manual/administration/install-community/
+
 ## API Documentation
 
 /public/apidoc
@@ -16,15 +22,8 @@ It should include a brief explanation of the purpose of your API and instruction
 run nodejs server and go to root url: localhost:3000
 
 Case sensitive
-## Installation
 
-###Install Node.js and npm
-Follow the instructions here : https://nodejs.org/
-
-###Install mongoDB
-Follow precisely the instructions here : https://docs.mongodb.org/manual/administration/install-community/
-
-## Run
+## Run the api REST
 
 ### Run the mongoDB database
 Run the executable file **mongod** (mongod.exe on windows) which is contained in your mongodb install directory
@@ -40,9 +39,9 @@ grunt
 Run these command from the project folder
 
 ```
-"mongoimport" --db project1-development --collection users --file default_example_users.json
-"mongoimport" --db project1-development --collection issueTypes --file default_example_issuesTypes.json
-"mongoimport" --db project1-development --collection issues --file default_example_issues.json
+mongoimport --db project1-development --collection users --file default_example_users.json
+mongoimport --db project1-development --collection issueTypes --file default_example_issuesTypes.json
+mongoimport --db project1-development --collection issues --file default_example_issues.json
 ```
 **Note** if you are using babun on windows the path should be like (if it's not in your path) : "/c/MongoDB/Server/3.2/bin/mongoimport"
 

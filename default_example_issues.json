@@ -9,13 +9,13 @@
             "type" : "statutChange",
             "content" : "created",
             "author" : "luc",
-            "createdAt" : "2016-02-15T10:00:00.000Z"
+            "createdAt" : "2016-02-15T10:00:00"
         },
         {
             "type" : "comment",
             "content" : "I need to add that I'm really disappointed by young people!",
             "author" : "luc",
-            "createdAt" : "2016-02-15T15:00:00.000Z"
+            "createdAt" : "2016-02-15T15:00:00"
         }
     ],
     "tags" : [
@@ -29,7 +29,7 @@
 {
     "name" : "Stroboscopic streetlight",
     "description" : "One streetlight on the Vial al Fiume Street in Lugano is about to died",
-    "status" : "created",
+    "status" : "assigned",
     "author" : "milou",
     "assignedStaff": "alain",
     "type" : "streetlight",
@@ -38,13 +38,13 @@
             "type" : "statutChange",
             "content" : "created",
             "author" : "luc",
-            "createdAt" : "2016-01-15T19:30:00.000Z"
+            "createdAt" : "2016-01-15T19:30:00"
         },
         {
             "type" : "statutChange",
             "content" : "assigned",
             "author" : "alain",
-            "createdAt" : "2016-02-17T12:00:00.000Z"
+            "createdAt" : "2016-02-17T12:00:00"
         }
     ],
     "tags" : [
@@ -56,42 +56,42 @@
     ]
 }
 {
-    "name" : "Burned fire",
+    "name" : "Burned bin",
     "description" : "It seems that a fire destroy the bin next to the Scuola Media Viganello School",
-    "status" : "created",
+    "status" : "solved",
     "author" : "patrick",
     "assignedStaff": "patrick",
-    "type" : "streetlight",
+    "type" : "bin",
     "actions" : [
         {
             "type" : "statutChange",
             "content" : "created",
             "author" : "patrick",
-            "createdAt" : "2016-01-01T08:30:00.000Z"
+            "createdAt" : "2016-01-01T08:30:00"
         },
         {
             "type" : "statutChange",
             "content" : "assigned",
             "author" : "patrick",
-            "createdAt" : "2016-01-01T08:30:00.000Z"
+            "createdAt" : "2016-01-01T08:30:00"
         },
         {
             "type" : "statutChange",
             "content" : "in_progress",
             "author" : "patrick",
-            "createdAt" : "2016-01-01T08:30:00.000Z"
+            "createdAt" : "2016-01-01T08:30:00"
         },
         {
             "type" : "comment",
             "content" : "The place is now cleaned and the new bin will bin installed tommorow",
             "author" : "patrick",
-            "createdAt" : "2016-01-03T15:30:00.000Z"
+            "createdAt" : "2016-01-03T15:30:00"
         },
         {
             "type" : "statutChange",
             "content" : "solved",
             "author" : "patrick",
-            "createdAt" : "2016-01-04T10:30:00.000Z"
+            "createdAt" : "2016-01-04T10:30:00"
         }
     ],
     "tags" : [
@@ -105,7 +105,7 @@
 {
     "name" : "Damaged political advertising display",
     "description" : "The new UDC campaign display was damaged during the night",
-    "status" : "created",
+    "status" : "solved",
     "author" : "milou",
     "assignedStaff": "alain",
     "type" : "advertising",
@@ -114,25 +114,25 @@
             "type" : "statutChange",
             "content" : "created",
             "author" : "milou",
-            "createdAt" : "2016-02-03T07:30:00.000Z"
+            "createdAt" : "2016-02-03T07:30:00"
         },
         {
             "type" : "statutChange",
             "content" : "assigned",
             "author" : "patrick",
-            "createdAt" : "2016-02-03T11:30:00.000Z"
+            "createdAt" : "2016-02-03T11:30:00"
         },
         {
             "type" : "comment",
             "content" : "The issue is now sended to the appropriate advertising company",
             "author" : "alain",
-            "createdAt" : "2016-02-05T16:30:00.000Z"
+            "createdAt" : "2016-02-05T16:30:00"
         },
         {
             "type" : "statutChange",
             "content" : "solved",
             "author" : "alain",
-            "createdAt" : "2016-02-05T16:31:00.000Z"
+            "createdAt" : "2016-02-05T16:31:00"
         }
     ],
     "tags" : [
