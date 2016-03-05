@@ -31,7 +31,7 @@ module.exports = function (app) {
   * @apiParam {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
   * @apiParam {String=comment,statusChange} actions.type Type of the action
   * @apiParam {String} actions.content Description for comment action or status for statusChange action
-  * @apiParam {Date} [actions.createdAt=now] Date of the action
+  * @apiParam {Date} [actions.createdAt=now] Date of the action (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
   *
   * @apiSuccess {String} _id Id of the Issue
   * @apiSuccess {String} name Name of the Issue
@@ -47,8 +47,8 @@ module.exports = function (app) {
   * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
   * @apiSuccess {String} actions.type Type of the action
   * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
-  * @apiSuccess {Date} actions.createdAt=now Date of the action
-  * @apiSuccess {String} actions._id Id of the Issue
+  * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
+  * @apiSuccess {String} actions._id Id of the Action
   *
   * @apiSuccessExample Success-Response:
   *     HTTP/1.1 200 OK
@@ -132,7 +132,7 @@ router.post('/',toolsFYS.CheckCitizenAuthorization, function (req, res, next) {
  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
- * @apiSuccess {Date} actions.createdAt=now Date of the action
+ * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
  * @apiSuccess {String} actions._id Id of the Issue
  *
  * @apiSuccessExample Success-Response:
@@ -207,8 +207,8 @@ router.put('/:id', findIssue, function (req, res, next) {
  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
- * @apiSuccess {Date} actions.createdAt=now Date of the action
- * @apiSuccess {String} actions._id Id of the Issue
+ * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
+ * @apiSuccess {String} actions._id Id of the Action
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -252,8 +252,8 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiParam {String} [name] Filter by name of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIs] Filter by indicated status of Issues
  * @apiParam {Array=created,acknowledged,assigned,in_progress,solved,rejected} [statusIsNot] Filter by status of Issues (inverted)
- * @apiParam (Parameter Date){Date} [dateSince] Filter by date
- * @apiParam (Parameter Date){Date} [dateUntil] Filter by date
+ * @apiParam (Parameter Date){Date} [dateSince] Filter by date (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
+ * @apiParam (Parameter Date){Date} [dateUntil] Filter by date (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
  * @apiParam (Parameter Date){Date} [dateStatusIs=$statusIs] Filter by date of a certain status - required for a date if statutIs is not defined
  * @apiParam (Parameter Region){Number[]} [near] Filter by a region indicate by a point with coordinates
  * @apiParam (Parameter Region){Number} [distance=1000] Combinate with near and indicate the maximal distance (in meter) of the region (from the indicated center)
@@ -275,8 +275,8 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiSuccess {Object} actions List of actions - Comments and StatusChanges (Array of Strings)
  * @apiSuccess {String} actions.type Type of the action
  * @apiSuccess {String} actions.content Description for comment action or status for statusChange action
- * @apiSuccess {Date} actions.createdAt=now Date of the action
- * @apiSuccess {String} actions._id Id of the Issue
+ * @apiSuccess {Date} actions.createdAt=now Date of the action (Iso format: yyyy-mm-ddThh:mm:ss)
+ * @apiSuccess {String} actions._id Id of the Action
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -412,12 +412,12 @@ router.get('/', function (req, res, next) {
  * @apiParam {String=comment} type Type of action - should be 'Comment'
  * @apiParam {String} content Description of the comment
  * @apiParam {String} author Author of the comment
- * @apiParam {Date} [createdAt] Date of the comment
+ * @apiParam {Date} [createdAt] Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
  *
  * @apiSuccess {String=comment} type Type of action - should be 'Comment'
  * @apiSuccess {String} content Description of the comment
  * @apiSuccess {String} author Author of the comment
- * @apiSuccess {Date} [createdAt] Date of the comment
+ * @apiSuccess {Date} [createdAt] Date of the comment (Iso format: yyyy-mm-ddThh:mm:ss)
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -460,12 +460,12 @@ router.post('/:id/actions/comments', toolsFYS.CheckCitizenAuthorization, findIss
  * @apiParam {String=statusChange} type Type of action - should be 'statusChange'
  * @apiParam {String} content New status of the issue
  * @apiParam {String} author Author of the status change
- * @apiParam {Date} [createdAt] Date of the status change
+ * @apiParam {Date} [createdAt] Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss, Time can be omitted)
  *
  * @apiSuccess {String=statusChange} type Type of action - should be 'statusChange'
  * @apiSuccess {String} content Description of the status change
  * @apiSuccess {String} author Author of the status change
- * @apiSuccess {Date} [createdAt] Date of the status change
+ * @apiSuccess {Date} [createdAt] Date of the status change (Iso format: yyyy-mm-ddThh:mm:ss)
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
