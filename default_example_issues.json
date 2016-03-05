@@ -29,7 +29,7 @@
     "name" : "Stroboscopic streetlight",
     "description" : "One streetlight on the Vial al Fiume Street in Lugano is about to died",
     "status" : "assigned",
-    "author" : "milou",
+    "author" : "luc",
     "assignedStaff": "alain",
     "type" : "streetlight",
     "actions" : [
@@ -130,6 +130,46 @@
             "content" : "solved",
             "author" : "alain",
             "createdAt" : "2016-02-05T16:31:00"
+        }
+    ],
+    "tags" : [
+        "political", "damaged", "ads"
+    ],
+    "location" : {
+      "coordinates":[8.946594,45.989298]
+    }
+}
+{
+    "name" : "Damaged political advertising display 2",
+    "description" : "The new UDC campaign display was damaged during the night",
+    "status" : "solved",
+    "author" : "milou",
+    "assignedStaff": "alain",
+    "type" : "advertising",
+    "actions" : [
+        {
+            "type" : "statusChange",
+            "content" : "created",
+            "author" : "milou",
+            "createdAt" : "2016-01-03T07:30:00"
+        },
+        {
+            "type" : "statusChange",
+            "content" : "assigned",
+            "author" : "patrick",
+            "createdAt" : "2016-01-03T11:30:00"
+        },
+        {
+            "type" : "comment",
+            "content" : "The issue is now sended to the appropriate advertising company",
+            "author" : "alain",
+            "createdAt" : "2016-01-05T16:30:00"
+        },
+        {
+            "type" : "statusChange",
+            "content" : "solved",
+            "author" : "alain",
+            "createdAt" : "2016-01-05T16:31:00"
         }
     ],
     "tags" : [

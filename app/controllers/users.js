@@ -233,7 +233,8 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
 
       var issueOrder = -1;
       var criteriaUser = {};
-      var criteriaIssue = {};
+      var criteriaActions = {};
+      var criteriaAssigned = {};
 
       // Filter by role
       if (req.query.role) {
@@ -245,29 +246,46 @@ router.get('/', toolsFYS.CheckStaffAuthorization, function (req, res, next) {
         //filter by statusIs
         if(req.query.issueStatusIs){
           var IssueStatusIs = req.query.issueStatusIs.split(',');
-          criteriaIssue.actions = {
-            "$elemMatch": {
-              "status": {$in: IssueStatusIs }
-            }
-          };
+          //content contained the status in the subdocument actions
+          criteriaActions = {"actions.content":{$in: IssueStatusIs }};
         }
         //filter by statusIsNot
         if(req.query.issueStatusIsNot){
           var IssueStatusIsNot = req.query.issueStatusIsNot.split(',');
-          criteriaIssue.actions.status = {$nin: IssueStatusIsNot };
+          //content contained the status in the subdocument actions
+          criteriaActions = {status:{$nin: IssueStatusIsNot }};
         }
 
         if(req.query.order == 'leastFirst'){
           issueOrder = 1;
         }
 
+        if(req.query.assignedStaff){
+          criteriaAssigned = {cmp_value: {$eq:true}};
+        }
+
+        //criteriaIssue = {"actions.author" : "patrick" };
+
         Issue.aggregate([
           {
-            $match: criteriaIssue
+            $unwind:'$actions'
+          },
+          {
+            $match: criteriaActions
+          },
+          {
+            $project: {
+              _id: '$actions.author',
+              cmp_value: {$eq: ['$assignedStaff', '$actions.author']},
+              total: { $sum: 1 }
+            }
+          },
+          {
+            $match: criteriaAssigned
           },
           {
             $group: {
-              _id: '$author',
+              _id: '$_id',
               total: { $sum: 1 }
             }
           },

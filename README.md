@@ -85,13 +85,14 @@ GET  /api/v1/issues/:id/actions/statusChanges HTTP/1.1
 ```
 ### Get the list of users who have created most issues.
 ```http
-GET  /api/v1/users?issueStatusIs=created&order=mostFirst&limit=10 HTTP/1.
+GET  /api/v1/users?issueStatusIs=created HTTP/1.
 ```
+The order mostFirst is by default
 ### Get the list of users who have solved most issues.
 ```http
-GET  /api/v1/users?issueStatusIs=solved&limit=10 HTTP/1.1
+GET  /api/v1/users?issueStatusIs=solved HTTP/1.1
 ```
 ### Get the list of users who have the least assigned issues not yet solved or rejected.
 ```http
-GET   /api/v1/users?issueStatusIsNot=solved,rejected&order=leastFirst&limit=10 HTTP/1.1
+GET   /api/v1/users?issueStatusIsAtLeast=assigned&issueStatusIsNot=solved,rejected&order=leastFirst HTTP/1.1
 ```
