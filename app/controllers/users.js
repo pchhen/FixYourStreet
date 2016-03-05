@@ -1,5 +1,4 @@
-var async = require('async'),
-        express = require('express'),
+var express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         User = mongoose.model('User'),

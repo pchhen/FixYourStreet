@@ -1,4 +1,5 @@
-var express = require('express'),
+var async = require('async'),
+        express = require('express'),
         router = express.Router(),
         mongoose = require('mongoose'),
         Issue = mongoose.model('Issue'),
@@ -253,6 +254,8 @@ router.get('/:id', findIssue, function (req, res, next) {
  * @apiParam {String} [author] Filter by author of Issues
  * @apiParam {String} [assignedStaff] Filter by assignedStaff of Issues
  * @apiParam {String} [type] Filter by type of Issues
+ * @apiParam (Parameter Pagination){String} [page=1] Actual page number
+ * @apiParam (Parameter Pagination){String} [pageSize=30] Number of Issues per page
  *
  * @apiSuccess {String} _id Id of the Issue
  * @apiSuccess {String} name Name of the Issue
@@ -301,6 +304,14 @@ router.get('/', function (req, res, next) {
 
     var criteria = {};
     var sortcritera = 'name';
+
+    // Filter Pagination
+    var page = req.query.page ? parseInt(req.query.page, 10) : 1,
+        pageSize = req.query.pageSize ? parseInt(req.query.pageSize, 10) : 30;
+
+    // Convert page and page size to offset and limit.
+    var offset = (page - 1) * pageSize,
+        limit = pageSize;
 
     //filter by name (in case of a duplicate name which is authorised by the model)
     if (req.query.name) {
@@ -381,15 +392,75 @@ router.get('/', function (req, res, next) {
         criteria.type = req.query.type;
     }
 
-    Issue.find(criteria).sort(sortcritera).populate('action').exec(function (err, issues) {
+    // Count all issues (without filters).
+    function countAllIssues(callback) {
+      Issue.count(function(err, totalCount) {
         if (err) {
-            res.status(500).send(err);
-            return;
+          callback(err);
+        } else {
+          callback(undefined, totalCount);
         }
-        res.send(issues);
-    });
+      });
+    }
 
-});
+    // Count issues matching the filters.
+    function countFilteredIssues(callback) {
+      Issue.count(criteria, function(err, filteredCount) {
+        if (err) {
+          callback(err);
+        } else {
+          callback(undefined, filteredCount);
+        }
+      });
+    }
+
+    // Find issues matching the filters.
+    function findMatchingIssues(callback) {
+
+      var query = Issue
+        .find(criteria)
+        // Do not forget to sort, as pagination makes more sense with sorting.
+        .sort(sortcritera)
+        .populate('action')
+        .skip(offset)
+        .limit(limit);
+
+      // Execute the query.
+      query.exec(function(err, issues) {
+        if (err) {
+          callback(err);
+        } else {
+          callback(undefined, issues);
+        }
+      });
+    }
+
+    // Set the pagination headers and send the matching issues in the body.
+    function sendResponse(err, results) {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
+
+      var totalCount = results[0],
+          filteredCount = results[1],
+          issues = results[2];
+
+      // Return the pagination data in headers.
+      res.set('X-Pagination-Page', page);
+      res.set('X-Pagination-Page-Size', pageSize);
+      res.set('X-Pagination-Total', totalCount);
+      res.set('X-Pagination-Filtered-Total', filteredCount);
+
+      res.send(issues);
+    }
+
+    async.parallel([
+      countAllIssues,
+      countFilteredIssues,
+      findMatchingIssues
+    ], sendResponse);
+  });
 
 /**
  * @api {post} /issues/:id/actions/comments Create a new Comment

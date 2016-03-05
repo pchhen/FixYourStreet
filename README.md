@@ -37,7 +37,6 @@ grunt
 
 ### Add basic dataset
 Run these command from the project folder
-
 ```
 mongoimport --db project1-development --collection users --file default_example_users.json
 mongoimport --db project1-development --collection issuetypes --file default_example_issuetypes.json
@@ -87,7 +86,7 @@ GET  /api/v1/issues/:id/actions/statusChanges HTTP/1.1
 ```http
 GET  /api/v1/users?issueStatusIs=created HTTP/1.
 ```
-The order mostFirst is by default
+Note: The order mostFirst is by default
 ### Get the list of users who have solved most issues.
 ```http
 GET  /api/v1/users?issueStatusIs=solved HTTP/1.1
