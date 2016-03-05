@@ -1,17 +1,17 @@
 # FixYourStreet
 COMEM Web Services 2016 Project
 
-The project FixYourStreet was developed during one week of course (and some additional evening) at the University of Yverdon-Les-Bains. The goal is to provide an Api rest for a future application of citizen engagement.
+The project FixYourStreet was developed during one week of course (and some additional evening) at the University of Yverdon-Les-Bains in the Comem Departement. The goal is to provide an Api rest for a future application of citizen engagement.
 In this application, the citizen supplied with his smartphone will have the possibility to notify damage in his city environment. It can be for example a broken streetlight or a graffiti.
 
 The project is based on the specification provided on the iflux blog: http://www.iflux.io/use-case/2015/02/03/citizen-engagement.html
-All others students projects and informations can be find here:
+All others students projects and informations can be found here:
 [https://github.com/SoftEng-HEIGVD/Teaching-HEIGVD-CM_WEBS-2016](https://github.com/SoftEng-HEIGVD/Teaching-HEIGVD-CM_WEBS-2016)
 
 ## Requirements
 
 ### Node.js and npm
-Tested compatibility with the v4.3.2 LTS
+Compatibility with the v4.3.2 LTS (at least)
 For installation, follow the instructions here : https://nodejs.org/
 
 ### MongoDB
@@ -20,7 +20,7 @@ For installation, follow precisely the instructions here : https://docs.mongodb.
 ### npm Modules
 #### Yeoman
 Contain 3 essentials tools for the workflow: Yo, Grunt, Bower
-Run these command in your terminal
+Run these commands in your terminal
 ```
 npm install -g npm
 ```
